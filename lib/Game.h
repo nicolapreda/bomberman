@@ -1,14 +1,12 @@
 #include "Platform/Platform.hpp"
 
-#include <iostream>
+// rand libraries
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <time.h>
 
-using namespace util;
-using namespace std;
 using namespace sf;
+using namespace std;
 
 class Game
 {
@@ -21,11 +19,13 @@ private:
 
 	// game objects
 	RectangleShape enemy;
+	RectangleShape player;
 
 	// private functions
 	void initializeVariables();
 	void initWindow();
 	void initEnemies();
+	void initPlayer();
 
 public:
 	// constructors

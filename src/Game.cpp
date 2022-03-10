@@ -10,6 +10,7 @@ Game::Game()
 	this->initializeVariables();
 	this->initWindow();
 	this->initEnemies();
+	this->initPlayer();
 }
 
 bool Game::running()
@@ -33,6 +34,8 @@ void Game::render()
 
 	// draw enemies
 	this->window->draw(this->enemy);
+	// draw player
+	this->window->draw(this->player);
 
 	this->window->display();
 }
@@ -62,17 +65,47 @@ void Game::pollEvents()
 			case Event::Closed:
 				this->window->close();
 				break;
+
 			default:
 				break;
 		}
+
+		if (Keyboard::isKeyPressed(Keyboard::W))
+			player.move(0, -5);
+		if (Keyboard::isKeyPressed(Keyboard::S))
+			player.move(0, 5);
+		if (Keyboard::isKeyPressed(Keyboard::D))
+			player.move(5, 0);
+		if (Keyboard::isKeyPressed(Keyboard::A))
+			player.move(-5, 0);
 	}
 }
 
 void Game::initEnemies()
 {
+	/*srand(time(NULL));
+	for (int i = 0; i < 10; i++)
+		enemybounds[i] = enemy[i].getGlobalBounds();
+
+	srand(time(NULL));
+	for (int i = 0; i < 10; i++)
+	{
+		float x = rand() % dist + 1; // dist is the visible width of the screen
+		enemy[i].setPosition(x, 180);
+	}*/
+
 	//this->enemy.setPosition(0,0);
 	this->enemy.setSize(Vector2f(100.f, 100.f));
 	this->enemy.setFillColor(Color::Cyan);
 	this->enemy.setOutlineColor(Color::Green);
 	this->enemy.setOutlineThickness(1.f);
+}
+
+void Game::initPlayer()
+{
+	this->player.setPosition(200.f, 200.f);
+	this->player.setSize(Vector2f(80.f, 80.f));
+	this->player.setFillColor(Color::Red);
+	this->player.setOutlineColor(Color::White);
+	this->player.setOutlineThickness(1.f);
 }
