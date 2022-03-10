@@ -38,6 +38,11 @@ void Game::render()
 	this->window->draw(this->player);
 
 	this->window->display();
+
+	for (int i = 0; i < 16; i++)
+	{
+		this->window->draw(this->wall[i]);
+	}
 }
 
 void Game::initializeVariables()
@@ -58,6 +63,28 @@ void Game::initWindow()
 
 void Game::pollEvents()
 {
+	// left collision
+	if (player.getPosition().x < 0.f)
+		player.setPosition(0.f, player.getPosition().y);
+	// top collision
+	if (player.getPosition().y < 0.f)
+		player.setPosition(player.getPosition().x, 0.f);
+	// right collision
+	if (player.getPosition().x + player.getGlobalBounds().width > 1024)
+		player.setPosition(1024 - player.getGlobalBounds().width, player.getPosition().y);
+	// bottom collision
+	if (player.getPosition().y + player.getGlobalBounds().height > 720)
+		player.setPosition(player.getPosition().x, 720 - player.getGlobalBounds().height);
+
+	if (xPosition < 0.f || xPosition > 1024 - 100)
+		xVelocity *= -1;
+	if (yPosition < 0.f || yPosition > 720)
+		yVelocity *= -1;
+
+	xPosition += xVelocity;
+	yPosition += yVelocity;
+
+	enemy.setPosition(xPosition, yPosition);
 	while (this->window->pollEvent(this->event))
 	{
 		switch (this->event.type)
@@ -70,29 +97,22 @@ void Game::pollEvents()
 				break;
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::W))
+		if (Keyboard::isKeyPressed(Keyboard::Key::W))
 			player.move(0, -5);
-		if (Keyboard::isKeyPressed(Keyboard::S))
+		if (Keyboard::isKeyPressed(Keyboard::Key::S))
 			player.move(0, 5);
-		if (Keyboard::isKeyPressed(Keyboard::D))
+		if (Keyboard::isKeyPressed(Keyboard::Key::D))
 			player.move(5, 0);
-		if (Keyboard::isKeyPressed(Keyboard::A))
+		if (Keyboard::isKeyPressed(Keyboard::Key::A))
 			player.move(-5, 0);
 	}
 }
 
 void Game::initEnemies()
 {
-	/*srand(time(NULL));
-	for (int i = 0; i < 10; i++)
-		enemybounds[i] = enemy[i].getGlobalBounds();
-
-	srand(time(NULL));
-	for (int i = 0; i < 10; i++)
-	{
-		float x = rand() % dist + 1; // dist is the visible width of the screen
-		enemy[i].setPosition(x, 180);
-	}*/
+	xPosition = rand() % 1024;
+	yPosition = rand() % 720;
+	this->enemy.setPosition(xPosition, yPosition);
 
 	//this->enemy.setPosition(0,0);
 	this->enemy.setSize(Vector2f(100.f, 100.f));
@@ -108,4 +128,14 @@ void Game::initPlayer()
 	this->player.setFillColor(Color::Red);
 	this->player.setOutlineColor(Color::White);
 	this->player.setOutlineThickness(1.f);
+}
+
+void Game::initWalls()
+{
+	for (int i = 0, pos = 80; i < 16; i++, pos += 80)
+	{
+		this->wall[i].setPosition(pos, pos);
+		this->wall[i].setSize(Vector2f(80.f, 80.f));
+		this->wall[i].setFillColor(Color::Magenta);
+	}
 }

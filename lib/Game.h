@@ -19,9 +19,16 @@ private:
 
 	// game objects
 	RectangleShape enemy;
+	float xVelocity = 3;
+	float yVelocity = 3;
+	float xPosition;
+	float yPosition;
+	RectangleShape wall[15];
+
 	RectangleShape player;
 
 	// private functions
+	void initWalls();
 	void initializeVariables();
 	void initWindow();
 	void initEnemies();
