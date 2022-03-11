@@ -2,63 +2,63 @@
 
 Game::~Game()
 {
-	delete this->window;
+	delete window;
 }
 
 Game::Game()
 {
-	this->initializeVariables();
-	this->initWindow();
-	this->initEnemies();
-	this->initPlayer();
+	initializeVariables();
+	initWindow();
+	initEnemies();
+	initPlayer();
+	initDefWalls();
 }
 
 bool Game::running()
 {
-	return this->window->isOpen();
+	return window->isOpen();
 }
 // accessors
 
 // functions
 void Game::update()
 {
-	this->pollEvents();
+	pollEvents();
 }
 
 void Game::render()
 {
 	// clear window
-	this->window->clear();
+	window->clear(Color(0, 148, 0));
 
-	// draw game objects
+	// draw walls
+	for (int i = 0; i < 24; i++)
+	{
+		window->draw(wall[i]);
+	}
 
 	// draw enemies
-	this->window->draw(this->enemy);
+	window->draw(enemy);
 	// draw player
-	this->window->draw(this->player);
+	window->draw(player);
 
-	this->window->display();
-
-	for (int i = 0; i < 16; i++)
-	{
-		this->window->draw(this->wall[i]);
-	}
+	window->display();
 }
 
 void Game::initializeVariables()
 {
-	this->window = nullptr;
+	window = nullptr;
 }
 
 void Game::initWindow()
 {
-	this->videoMode.height = 720;
-	this->videoMode.width = 1024;
+	videoMode.height = 720;
+	videoMode.width = 1024;
 
-	this->window = new RenderWindow(this->videoMode, "Bomberman", Style::Close);
+	window = new RenderWindow(videoMode, "Bomberman", Style::Close);
 
 	// set a framerate limit
-	this->window->setFramerateLimit(144);
+	window->setFramerateLimit(60);
 }
 
 void Game::pollEvents()
@@ -85,26 +85,26 @@ void Game::pollEvents()
 	yPosition += yVelocity;
 
 	enemy.setPosition(xPosition, yPosition);
-	while (this->window->pollEvent(this->event))
+	while (window->pollEvent(event))
 	{
-		switch (this->event.type)
+		switch (event.type)
 		{
 			case Event::Closed:
-				this->window->close();
+				window->close();
 				break;
 
 			default:
 				break;
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::Key::W))
-			player.move(0, -5);
-		if (Keyboard::isKeyPressed(Keyboard::Key::S))
-			player.move(0, 5);
-		if (Keyboard::isKeyPressed(Keyboard::Key::D))
-			player.move(5, 0);
-		if (Keyboard::isKeyPressed(Keyboard::Key::A))
-			player.move(-5, 0);
+		if (Keyboard::isKeyPressed(Keyboard::W))
+			player.move(0, -6);
+		if (Keyboard::isKeyPressed(Keyboard::S))
+			player.move(0, 6);
+		if (Keyboard::isKeyPressed(Keyboard::D))
+			player.move(6, 0);
+		if (Keyboard::isKeyPressed(Keyboard::A))
+			player.move(-6, 0);
 	}
 }
 
@@ -112,30 +112,40 @@ void Game::initEnemies()
 {
 	xPosition = rand() % 1024;
 	yPosition = rand() % 720;
-	this->enemy.setPosition(xPosition, yPosition);
+	enemy.setPosition(xPosition, yPosition);
 
-	//this->enemy.setPosition(0,0);
-	this->enemy.setSize(Vector2f(100.f, 100.f));
-	this->enemy.setFillColor(Color::Cyan);
-	this->enemy.setOutlineColor(Color::Green);
-	this->enemy.setOutlineThickness(1.f);
+	enemy.setSize(Vector2f(80.f, 80.f));
+	enemy.setFillColor(Color::Cyan);
+	enemy.setOutlineColor(Color::Green);
+	enemy.setOutlineThickness(1.f);
 }
 
 void Game::initPlayer()
 {
-	this->player.setPosition(200.f, 200.f);
-	this->player.setSize(Vector2f(80.f, 80.f));
-	this->player.setFillColor(Color::Red);
-	this->player.setOutlineColor(Color::White);
-	this->player.setOutlineThickness(1.f);
+	player.setPosition(200.f, 200.f);
+	player.setSize(Vector2f(80.f, 80.f));
+	player.setFillColor(Color::Red);
+	player.setOutlineColor(Color::White);
+	player.setOutlineThickness(1.f);
 }
 
-void Game::initWalls()
+void Game::initDefWalls()
 {
-	for (int i = 0, pos = 80; i < 16; i++, pos += 80)
+	int counter = 0;
+	for (int i = 0, yPos = 80; i < 4; i++, yPos += 160)
 	{
-		this->wall[i].setPosition(pos, pos);
-		this->wall[i].setSize(Vector2f(80.f, 80.f));
-		this->wall[i].setFillColor(Color::Magenta);
+		for (int x = 0, xPos = 80; x < 6; x++, xPos += 160, counter++)
+		{
+			wall[counter].setPosition(xPos, yPos);
+			wall[counter].setSize(Vector2f(80.f, 80.f));
+			wall[counter].setFillColor(Color(186, 186, 186));
+			wall[counter].setOutlineColor(Color(109, 117, 104));
+			wall[counter].setOutlineThickness(2.f);
+		}
 	}
+}
+
+void Game::initRandWalls()
+{
+	//int walls = rand() % 20;
 }

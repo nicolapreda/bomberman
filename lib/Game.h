@@ -23,12 +23,16 @@ private:
 	float yVelocity = 3;
 	float xPosition;
 	float yPosition;
-	RectangleShape wall[15];
+	RectangleShape wall[27];
 
 	RectangleShape player;
 
+	int mapMatrix[4][6];
+
 	// private functions
-	void initWalls();
+	void initDefWalls();
+	void initRandWalls();
+
 	void initializeVariables();
 	void initWindow();
 	void initEnemies();
