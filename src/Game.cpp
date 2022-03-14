@@ -36,6 +36,7 @@ void Game::render()
 	{
 		window->draw(wall[i]);
 	}
+	window->draw(nextBox);
 
 	// draw enemies
 	window->draw(enemy);
@@ -53,7 +54,7 @@ void Game::initializeVariables()
 void Game::initWindow()
 {
 	videoMode.height = 720;
-	videoMode.width = 1024;
+	videoMode.width = 1280;
 
 	window = new RenderWindow(videoMode, "Bomberman", Style::Close);
 
@@ -63,6 +64,11 @@ void Game::initWindow()
 
 void Game::pollEvents()
 {
+	// collision
+	FloatRect nextPos;
+	RectangleShape nextBox;
+	nextBox.setSize(Vector2f(gridSize, gridSize));
+
 	// left collision
 	if (player.getPosition().x < 0.f)
 		player.setPosition(0.f, player.getPosition().y);
@@ -96,7 +102,23 @@ void Game::pollEvents()
 			default:
 				break;
 		}
+		// collision
+		for (int i = 0; i < 27; i++)
+		{
+			FloatRect playerBounds = player.getGlobalBounds();
+			FloatRect wallBounds = wall[i].getLocalBounds();
 
+			nextPos = playerBounds;
+			nextPos.top += velocity.y;
+			nextPos.left += velocity.x;
+
+			if (wallBounds.intersects(nextPos))
+			{
+				cout << "collision" << endl;
+			}
+		}
+
+		// player move
 		if (Keyboard::isKeyPressed(Keyboard::W))
 			player.move(0, -6);
 		if (Keyboard::isKeyPressed(Keyboard::S))
