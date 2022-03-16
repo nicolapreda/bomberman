@@ -35,8 +35,8 @@ void Game::render()
 	for (int i = 0; i < 24; i++)
 	{
 		window->draw(wall[i]);
+		window->draw(permWall[i]);
 	}
-	window->draw(nextBox);
 
 	// draw enemies
 	window->draw(enemy);
@@ -54,7 +54,7 @@ void Game::initializeVariables()
 void Game::initWindow()
 {
 	videoMode.height = 720;
-	videoMode.width = 1280;
+	videoMode.width = 1024;
 
 	window = new RenderWindow(videoMode, "Bomberman", Style::Close);
 
@@ -64,11 +64,6 @@ void Game::initWindow()
 
 void Game::pollEvents()
 {
-	// collision
-	FloatRect nextPos;
-	RectangleShape nextBox;
-	nextBox.setSize(Vector2f(gridSize, gridSize));
-
 	// left collision
 	if (player.getPosition().x < 0.f)
 		player.setPosition(0.f, player.getPosition().y);
@@ -102,23 +97,7 @@ void Game::pollEvents()
 			default:
 				break;
 		}
-		// collision
-		for (int i = 0; i < 27; i++)
-		{
-			FloatRect playerBounds = player.getGlobalBounds();
-			FloatRect wallBounds = wall[i].getLocalBounds();
 
-			nextPos = playerBounds;
-			nextPos.top += velocity.y;
-			nextPos.left += velocity.x;
-
-			if (wallBounds.intersects(nextPos))
-			{
-				cout << "collision" << endl;
-			}
-		}
-
-		// player move
 		if (Keyboard::isKeyPressed(Keyboard::W))
 			player.move(0, -6);
 		if (Keyboard::isKeyPressed(Keyboard::S))
@@ -136,7 +115,7 @@ void Game::initEnemies()
 	yPosition = rand() % 720;
 	enemy.setPosition(xPosition, yPosition);
 
-	enemy.setSize(Vector2f(80.f, 80.f));
+	enemy.setSize(Vector2f(54.f, 48.f));
 	enemy.setFillColor(Color::Cyan);
 	enemy.setOutlineColor(Color::Green);
 	enemy.setOutlineThickness(1.f);
@@ -144,8 +123,8 @@ void Game::initEnemies()
 
 void Game::initPlayer()
 {
-	player.setPosition(200.f, 200.f);
-	player.setSize(Vector2f(80.f, 80.f));
+	player.setPosition(0, 0);
+	player.setSize(Vector2f(54.f, 48.f));
 	player.setFillColor(Color::Red);
 	player.setOutlineColor(Color::White);
 	player.setOutlineThickness(1.f);
@@ -154,14 +133,34 @@ void Game::initPlayer()
 void Game::initDefWalls()
 {
 	int counter = 0;
-	for (int i = 0, yPos = 80; i < 4; i++, yPos += 160)
+
+	for (int x = 0; x < 4; x++)
 	{
-		for (int x = 0, xPos = 80; x < 6; x++, xPos += 160, counter++)
+		permWall[x].setFillColor(Color(186, 186, 186));
+		permWall[x].setOutlineColor(Color::Black);
+		permWall[x].setOutlineThickness(2.f);
+	}
+
+	permWall[0].setPosition(0, 108);
+	permWall[0].setSize(Vector2f(53.f, 720));
+
+	permWall[1].setPosition(0, 108);
+	permWall[1].setSize(Vector2f(1024, 53.f));
+
+	permWall[2].setPosition(971, 108);
+	permWall[2].setSize(Vector2f(53.f, 720));
+
+	permWall[3].setPosition(0, 666);
+	permWall[3].setSize(Vector2f(1024, 53.f));
+
+	for (int i = 0, yPos = 192; i < 4; i++, yPos += 96)
+	{
+		for (int x = 0, xPos = 108; x < 6; x++, xPos += 108, counter++)
 		{
 			wall[counter].setPosition(xPos, yPos);
-			wall[counter].setSize(Vector2f(80.f, 80.f));
+			wall[counter].setSize(Vector2f(53.f, 53.f));
 			wall[counter].setFillColor(Color(186, 186, 186));
-			wall[counter].setOutlineColor(Color(109, 117, 104));
+			wall[counter].setOutlineColor(Color::Black);
 			wall[counter].setOutlineThickness(2.f);
 		}
 	}

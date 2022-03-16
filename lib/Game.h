@@ -18,14 +18,8 @@ private:
 	VideoMode videoMode;
 
 	// game objects
-	RectangleShape enemy;
-	float xVelocity = 3;
-	float yVelocity = 3;
-	float xPosition;
-	float yPosition;
-	RectangleShape wall[27];
-
-	RectangleShape player;
+	float xVelocity = 3, yVelocity = 3, xPosition, yPosition;
+	RectangleShape enemy, wall[27], permWall[30], player;
 
 	int mapMatrix[4][6];
 
