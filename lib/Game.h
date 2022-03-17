@@ -19,18 +19,20 @@ private:
 
 	// game objects
 	float xVelocity = 3, yVelocity = 3, xPosition, yPosition;
-	RectangleShape enemy, wall[27], permWall[30], player;
+	RectangleShape enemy, grid[200], player, planeTable;
 
-	int mapMatrix[4][6];
+	// main matrix
+	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
+	int mapMatrix[11][17] = { 0 };
 
 	// private functions
-	void initDefWalls();
+	void initGrid();
 	void initRandWalls();
 
 	void initializeVariables();
 	void initWindow();
-	void initEnemies();
-	void initPlayer();
+	void updateMatrix();
+	void Table();
 
 public:
 	// constructors

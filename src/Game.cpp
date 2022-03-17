@@ -9,9 +9,7 @@ Game::Game()
 {
 	initializeVariables();
 	initWindow();
-	initEnemies();
-	initPlayer();
-	initDefWalls();
+	initGrid();
 }
 
 bool Game::running()
@@ -24,26 +22,6 @@ bool Game::running()
 void Game::update()
 {
 	pollEvents();
-}
-
-void Game::render()
-{
-	// clear window
-	window->clear(Color(0, 148, 0));
-
-	// draw walls
-	for (int i = 0; i < 24; i++)
-	{
-		window->draw(wall[i]);
-		window->draw(permWall[i]);
-	}
-
-	// draw enemies
-	window->draw(enemy);
-	// draw player
-	window->draw(player);
-
-	window->display();
 }
 
 void Game::initializeVariables()
@@ -64,30 +42,13 @@ void Game::initWindow()
 
 void Game::pollEvents()
 {
-	// left collision
-	if (player.getPosition().x < 0.f)
-		player.setPosition(0.f, player.getPosition().y);
-	// top collision
-	if (player.getPosition().y < 0.f)
-		player.setPosition(player.getPosition().x, 0.f);
-	// right collision
-	if (player.getPosition().x + player.getGlobalBounds().width > 1024)
-		player.setPosition(1024 - player.getGlobalBounds().width, player.getPosition().y);
-	// bottom collision
-	if (player.getPosition().y + player.getGlobalBounds().height > 720)
-		player.setPosition(player.getPosition().x, 720 - player.getGlobalBounds().height);
-
-	if (xPosition < 0.f || xPosition > 1024 - 100)
-		xVelocity *= -1;
-	if (yPosition < 0.f || yPosition > 720)
-		yVelocity *= -1;
-
-	xPosition += xVelocity;
-	yPosition += yVelocity;
-
-	enemy.setPosition(xPosition, yPosition);
 	while (window->pollEvent(event))
 	{
+		for (int i = 0; i < 180; i++)
+		{
+			window->draw(grid[i]);
+		}
+
 		switch (event.type)
 		{
 			case Event::Closed:
@@ -97,76 +58,52 @@ void Game::pollEvents()
 			default:
 				break;
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::W))
-			player.move(0, -6);
-		if (Keyboard::isKeyPressed(Keyboard::S))
-			player.move(0, 6);
-		if (Keyboard::isKeyPressed(Keyboard::D))
-			player.move(6, 0);
-		if (Keyboard::isKeyPressed(Keyboard::A))
-			player.move(-6, 0);
 	}
 }
 
-void Game::initEnemies()
+void Game::render()
 {
-	xPosition = rand() % 1024;
-	yPosition = rand() % 720;
-	enemy.setPosition(xPosition, yPosition);
+	// clear window
+	window->clear(Color::Yellow);
 
-	enemy.setSize(Vector2f(54.f, 48.f));
-	enemy.setFillColor(Color::Cyan);
-	enemy.setOutlineColor(Color::Green);
-	enemy.setOutlineThickness(1.f);
-}
-
-void Game::initPlayer()
-{
-	player.setPosition(0, 0);
-	player.setSize(Vector2f(54.f, 48.f));
-	player.setFillColor(Color::Red);
-	player.setOutlineColor(Color::White);
-	player.setOutlineThickness(1.f);
-}
-
-void Game::initDefWalls()
-{
-	int counter = 0;
-
-	for (int x = 0; x < 4; x++)
+	for (int i = 0; i < 180; i++)
 	{
-		permWall[x].setFillColor(Color(186, 186, 186));
-		permWall[x].setOutlineColor(Color::Black);
-		permWall[x].setOutlineThickness(2.f);
+		window->draw(grid[i]);
 	}
 
-	permWall[0].setPosition(0, 108);
-	permWall[0].setSize(Vector2f(53.f, 720));
+	window->display();
+}
 
-	permWall[1].setPosition(0, 108);
-	permWall[1].setSize(Vector2f(1024, 53.f));
-
-	permWall[2].setPosition(971, 108);
-	permWall[2].setSize(Vector2f(53.f, 720));
-
-	permWall[3].setPosition(0, 666);
-	permWall[3].setSize(Vector2f(1024, 53.f));
-
-	for (int i = 0, yPos = 192; i < 4; i++, yPos += 96)
+void Game::initGrid()
+{
+	int yPos = 84, xPos = 0;
+	for (int y = 0, counter = 0; y < 11; y++)
 	{
-		for (int x = 0, xPos = 108; x < 6; x++, xPos += 108, counter++)
+		for (int x = 0; x < 17; x++, counter++)
 		{
-			wall[counter].setPosition(xPos, yPos);
-			wall[counter].setSize(Vector2f(53.f, 53.f));
-			wall[counter].setFillColor(Color(186, 186, 186));
-			wall[counter].setOutlineColor(Color::Black);
-			wall[counter].setOutlineThickness(2.f);
-		}
-	}
-}
+			if (x % 2 == 0 && y % 2 == 0)
+			{
+				mapMatrix[y][x] = -1;
+			}
+			else if (y == 0 || x == 0 || x == 16 || y == 10)
+			{
+				mapMatrix[y][x] = -1;
+			}
 
-void Game::initRandWalls()
-{
-	//int walls = rand() % 20;
+			if (mapMatrix[y][x] == -1)
+			{
+				grid[counter].setFillColor(Color::Black);
+			}
+			else
+			{
+				grid[counter].setFillColor(Color::Green);
+			}
+
+			grid[counter].setPosition(xPos, yPos);
+			grid[counter].setSize(Vector2f(60, 60));
+			xPos += 60;
+		}
+		yPos += 60;
+		xPos = 0;
+	}
 }
