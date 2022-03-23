@@ -27,7 +27,6 @@ private:
 
 	// textures
 	sf::Texture wall;
-
 	const sf::Texture* pWall = &wall;
 
 	// private functions
@@ -36,7 +35,7 @@ private:
 
 	void initializeVariables();
 	void initWindow();
-	void updateMatrix();
+	void updateGrid();
 	void initPlaneTable();
 
 public:

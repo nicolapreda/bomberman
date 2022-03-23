@@ -1,5 +1,9 @@
 #include <Game.h>
 
+#include <stdio.h>	/* printf, scanf, puts, NULL */
+#include <stdlib.h> /* srand, rand */
+#include <time.h>	/* time */
+
 Game::~Game()
 {
 	delete window;
@@ -9,6 +13,9 @@ Game::Game()
 {
 	initializeVariables();
 	initWindow();
+
+	// init game objects
+	initRandWalls();
 	initGrid();
 	initPlaneTable();
 }
@@ -94,6 +101,11 @@ void Game::initGrid()
 				mapMatrix[y][x] = -1;
 			}
 
+			if (mapMatrix[y][x] == 3)
+			{
+				grid[counter].setFillColor(Color::Yellow);
+			}
+
 			if (mapMatrix[y][x] == -1)
 			{
 				if (!wall.loadFromFile("./content/wall.png"))
@@ -107,7 +119,8 @@ void Game::initGrid()
 			{
 				grid[counter].setFillColor(Color::Black);
 			}
-			else
+
+			else if (mapMatrix[y][x] == 0)
 			{
 				grid[counter].setFillColor(Color(16, 122, 48));
 			}
@@ -125,4 +138,21 @@ void Game::initPlaneTable()
 	planeTable.setOutlineColor(Color(128, 23, 17));
 	planeTable.setOutlineThickness(2.f);
 	planeTable.setPosition(Vector2f(0, 0));
+}
+
+void Game::initRandWalls()
+{
+	srand(time(NULL));
+	int nWalls = 20, randPosX, randPosY;
+
+	for (int i = 0; i < nWalls;)
+	{
+		randPosX = rand() % 15 + 1;
+		randPosY = rand() % 9 + 1;
+		if (mapMatrix[randPosY][randPosX] != -1 && mapMatrix[randPosY][randPosX] != 3)
+		{
+			mapMatrix[randPosY][randPosX] = 3;
+			i++;
+		}
+	}
 }
