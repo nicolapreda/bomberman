@@ -26,8 +26,11 @@ private:
 	int mapMatrix[11][17] = { 0 };
 
 	// textures
+	sf::Texture permWall;
+	const sf::Texture* pWall = &permWall;
+
 	sf::Texture wall;
-	const sf::Texture* pWall = &wall;
+	const sf::Texture* tWall = &wall;
 
 	// private functions
 	void initGrid();
@@ -39,7 +42,7 @@ private:
 	void updateGrid();
 	void initPlaneTable();
 
-	void checkCollision();
+	bool checkCollision();
 
 public:
 	// constructors

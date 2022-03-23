@@ -120,14 +120,18 @@ void Game::initGrid()
 			switch (mapMatrix[y][x])
 			{
 				case -1:
-					if (!wall.loadFromFile("./content/wall.png"))
+					if (!permWall.loadFromFile("./content/perm_wall.png"))
 					{
-						cout << "Texture not found" << endl;
+						cout << "Texture not loaded" << endl;
 					}
 					grid[counter].setTexture(pWall);
 					break;
 				case 3:
-					grid[counter].setFillColor(Color::Yellow);
+					if (!wall.loadFromFile("./content/wall.png"))
+					{
+						cout << "Texture not loaded" << endl;
+					}
+					grid[counter].setTexture(tWall);
 					break;
 				case 0:
 					grid[counter].setFillColor(Color(16, 122, 48));
