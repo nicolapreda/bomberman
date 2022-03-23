@@ -32,11 +32,14 @@ private:
 	// private functions
 	void initGrid();
 	void initRandWalls();
+	void initPlayer();
 
 	void initializeVariables();
 	void initWindow();
 	void updateGrid();
 	void initPlaneTable();
+
+	void checkCollision();
 
 public:
 	// constructors

@@ -18,13 +18,13 @@ Game::Game()
 	initRandWalls();
 	initGrid();
 	initPlaneTable();
+	initPlayer();
 }
 
 bool Game::running()
 {
 	return window->isOpen();
 }
-// accessors
 
 // functions
 void Game::update()
@@ -45,7 +45,7 @@ void Game::initWindow()
 	window = new RenderWindow(videoMode, "Bomberman", Style::Close);
 
 	// set a framerate limit
-	window->setFramerateLimit(60);
+	window->setFramerateLimit(144);
 }
 
 void Game::pollEvents()
@@ -67,6 +67,22 @@ void Game::pollEvents()
 				break;
 		}
 	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::A))
+	{
+		player.move(-1.0f, 0.0f);
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::W))
+	{
+		player.move(0.0f, -1.0f);
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::S))
+	{
+		player.move(0.0f, 1.0f);
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::D))
+	{
+		player.move(1.0f, 0.0f);
+	}
 }
 
 void Game::render()
@@ -74,14 +90,14 @@ void Game::render()
 	// clear window
 	window->clear();
 
+	// draw objects
 	for (int i = 0; i < 187; i++)
 	{
 		window->draw(grid[i]);
 	}
 
-	// draw plane table
 	window->draw(planeTable);
-
+	window->draw(player);
 	window->display();
 }
 
@@ -101,30 +117,24 @@ void Game::initGrid()
 				mapMatrix[y][x] = -1;
 			}
 
-			if (mapMatrix[y][x] == 3)
+			switch (mapMatrix[y][x])
 			{
-				grid[counter].setFillColor(Color::Yellow);
+				case -1:
+					if (!wall.loadFromFile("./content/wall.png"))
+					{
+						cout << "Texture not found" << endl;
+					}
+					grid[counter].setTexture(pWall);
+					break;
+				case 3:
+					grid[counter].setFillColor(Color::Yellow);
+					break;
+				case 0:
+					grid[counter].setFillColor(Color(16, 122, 48));
+					break;
+				default:
+					break;
 			}
-
-			if (mapMatrix[y][x] == -1)
-			{
-				if (!wall.loadFromFile("./content/wall.png"))
-				{
-					cout << "sussy" << endl;
-				}
-
-				grid[counter].setTexture(pWall);
-			}
-			else if (mapMatrix[y][x] == -1)
-			{
-				grid[counter].setFillColor(Color::Black);
-			}
-
-			else if (mapMatrix[y][x] == 0)
-			{
-				grid[counter].setFillColor(Color(16, 122, 48));
-			}
-
 			grid[counter].setPosition(xPos, yPos);
 			grid[counter].setSize(Vector2f(60, 60));
 		}
@@ -155,4 +165,11 @@ void Game::initRandWalls()
 			i++;
 		}
 	}
+}
+
+void Game::initPlayer()
+{
+	player.setFillColor(Color::Blue);
+	player.setSize(Vector2f(60, 60));
+	player.setPosition(60, 144);
 }
