@@ -24,7 +24,6 @@ private:
 	// main matrix
 	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
 	int mapMatrix[11][17] = { 0 };
-
 	// textures
 	sf::Texture permWall;
 	const sf::Texture* pWall = &permWall;

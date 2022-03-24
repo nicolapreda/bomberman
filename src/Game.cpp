@@ -47,7 +47,7 @@ void Game::initWindow()
 	// set a framerate limit
 	window->setFramerateLimit(144);
 }
-
+bool clickw = false, clicka = false, clicks = false, clickd = false;
 void Game::pollEvents()
 {
 	while (window->pollEvent(event))
@@ -62,26 +62,55 @@ void Game::pollEvents()
 			case Event::Closed:
 				window->close();
 				break;
-
+			case Event::KeyReleased:
+				clicka = false;
+				clickw = false;
+				clicks = false;
+				clickd = false;
 			default:
 				break;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key::A))
+
+	if (Keyboard::isKeyPressed(Keyboard::Key::A) && clicks == false && clickw == false && clickd == false)
 	{
 		player.move(-1.0f, 0.0f);
+
+		if (checkCollision() == false)
+		{
+			player.move(1.0f, 0.0f);
+			clicka = true;
+		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key::W))
+	else if (Keyboard::isKeyPressed(Keyboard::Key::W) && clicks == false && clicka == false && clickd == false)
 	{
 		player.move(0.0f, -1.0f);
+
+		if (checkCollision() == false)
+		{
+			player.move(0.0f, 1.0f);
+			clickw = true;
+		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key::S))
+	else if (Keyboard::isKeyPressed(Keyboard::Key::S) && clicka == false && clickw == false && clickd == false)
 	{
 		player.move(0.0f, 1.0f);
+
+		if (checkCollision() == false)
+		{
+			player.move(0.0f, -1.0f);
+			clicks = true;
+		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key::D))
+	else if (Keyboard::isKeyPressed(Keyboard::Key::D) && clicks == false && clickw == false && clicka == false)
 	{
 		player.move(1.0f, 0.0f);
+
+		if (checkCollision() == false)
+		{
+			player.move(-1.0f, 0.0f);
+			clickd = true;
+		}
 	}
 }
 
@@ -174,6 +203,29 @@ void Game::initRandWalls()
 void Game::initPlayer()
 {
 	player.setFillColor(Color::Blue);
-	player.setSize(Vector2f(60, 60));
-	player.setPosition(60, 144);
+	player.setSize(Vector2f(50, 50));
+	player.setPosition(60, 150);
+}
+
+bool Game::checkCollision()
+{
+
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+			if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+			{
+				if (mapMatrix[x][y] == -1 || mapMatrix[x][y] == 3)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return false;
 }
