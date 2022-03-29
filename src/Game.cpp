@@ -47,7 +47,6 @@ void Game::initWindow()
 	// set a framerate limit
 	window->setFramerateLimit(144);
 }
-bool clickw = false, clicka = false, clicks = false, clickd = false;
 void Game::pollEvents()
 {
 	while (window->pollEvent(event))
@@ -62,54 +61,41 @@ void Game::pollEvents()
 			case Event::Closed:
 				window->close();
 				break;
-			case Event::KeyReleased:
-				clicka = false;
-				clickw = false;
-				clicks = false;
-				clickd = false;
 			default:
 				break;
 		}
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key::A) && clicks == false && clickw == false && clickd == false)
+	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
 		player.move(-1.0f, 0.0f);
-
-		if (checkCollision() == false)
+		if (checkCollision() == true)
 		{
 			player.move(1.0f, 0.0f);
-			clicka = true;
 		}
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Key::W) && clicks == false && clicka == false && clickd == false)
+	if (Keyboard::isKeyPressed(Keyboard::Key::W))
 	{
 		player.move(0.0f, -1.0f);
-
-		if (checkCollision() == false)
+		if (checkCollision() == true)
 		{
 			player.move(0.0f, 1.0f);
-			clickw = true;
 		}
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Key::S) && clicka == false && clickw == false && clickd == false)
+	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 	{
 		player.move(0.0f, 1.0f);
-
-		if (checkCollision() == false)
+		if (checkCollision() == true)
 		{
 			player.move(0.0f, -1.0f);
-			clicks = true;
 		}
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Key::D) && clicks == false && clickw == false && clicka == false)
+	if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
 		player.move(1.0f, 0.0f);
-
-		if (checkCollision() == false)
+		if (checkCollision() == true)
 		{
 			player.move(-1.0f, 0.0f);
-			clickd = true;
 		}
 	}
 }
@@ -203,7 +189,7 @@ void Game::initRandWalls()
 void Game::initPlayer()
 {
 	player.setFillColor(Color::Blue);
-	player.setSize(Vector2f(50, 50));
+	player.setSize(Vector2f(60, 60));
 	player.setPosition(60, 150);
 }
 
@@ -214,14 +200,20 @@ bool Game::checkCollision()
 	{
 		for (int x = 0; x < 17; x++, counter++)
 		{
+			//check if collides the entire area of the grid
 			if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
-				if (mapMatrix[x][y] == -1 || mapMatrix[x][y] == 3)
+
+				if (mapMatrix[y][x] == -1 || mapMatrix[y][x] == 3)
 				{
+					cout << "Collision" << endl;
+
 					return true;
 				}
 				else
 				{
+					cout << "No collision" << endl;
+
 					return false;
 				}
 			}
