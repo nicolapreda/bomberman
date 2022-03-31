@@ -19,18 +19,15 @@ private:
 
 	// game objects
 	float xVelocity = 3, yVelocity = 3, xPosition, yPosition;
-	RectangleShape enemy, grid[187], player, planeTable;
+	RectangleShape planeTable;
+
+	Sprite grid[187], player;
 
 	// main matrix
 	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
 	int mapMatrix[11][17] = { 0 };
 	// textures
-	sf::Texture permWall;
-	const sf::Texture* pWall = &permWall;
-
-	sf::Texture wall;
-	const sf::Texture* tWall = &wall;
-
+	sf::Texture permWall, wall, playertexture, grass;
 	// private functions
 	void initGrid();
 	void initRandWalls();

@@ -98,12 +98,16 @@ void Game::pollEvents()
 			player.move(-1.0f, 0.0f);
 		}
 	}
+
+	if (Keyboard::isKeyPressed(Keyboard::Key::Space))
+	{
+	}
 }
 
 void Game::render()
 {
 	// clear window
-	window->clear();
+	window->clear(Color(16, 122, 48));
 
 	// draw objects
 	for (int i = 0; i < 187; i++)
@@ -139,23 +143,21 @@ void Game::initGrid()
 					{
 						cout << "Texture not loaded" << endl;
 					}
-					grid[counter].setTexture(pWall);
+					grid[counter].setTexture(permWall);
 					break;
 				case 3:
 					if (!wall.loadFromFile("./content/wall.png"))
 					{
 						cout << "Texture not loaded" << endl;
 					}
-					grid[counter].setTexture(tWall);
+					grid[counter].setTexture(wall);
 					break;
-				case 0:
-					grid[counter].setFillColor(Color(16, 122, 48));
+
 					break;
 				default:
 					break;
 			}
 			grid[counter].setPosition(xPos, yPos);
-			grid[counter].setSize(Vector2f(60, 60));
 		}
 	}
 }
@@ -178,7 +180,7 @@ void Game::initRandWalls()
 	{
 		randPosX = rand() % 15 + 1;
 		randPosY = rand() % 9 + 1;
-		if (mapMatrix[randPosY][randPosX] != -1 && mapMatrix[randPosY][randPosX] != 3)
+		if (mapMatrix[randPosY][randPosX] != -1 && mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 1)
 		{
 			mapMatrix[randPosY][randPosX] = 3;
 			i++;
@@ -188,9 +190,12 @@ void Game::initRandWalls()
 
 void Game::initPlayer()
 {
-	player.setFillColor(Color::Blue);
-	player.setSize(Vector2f(60, 60));
-	player.setPosition(60, 150);
+	if (!playertexture.loadFromFile("./content/main-Sheet.png"))
+	{
+		cout << "Texture not loaded" << endl;
+	}
+	player.setTexture(playertexture);
+	player.setPosition(65, 150);
 }
 
 bool Game::checkCollision()
@@ -206,14 +211,11 @@ bool Game::checkCollision()
 
 				if (mapMatrix[y][x] == -1 || mapMatrix[y][x] == 3)
 				{
-					cout << "Collision" << endl;
-
 					return true;
 				}
 				else
 				{
-					cout << "No collision" << endl;
-
+					mapMatrix[y][x] = 1;
 					return false;
 				}
 			}
