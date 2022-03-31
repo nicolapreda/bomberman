@@ -9,7 +9,7 @@ Bomberman
 [![Published in Bioinformatics](https://img.shields.io/badge/Published%20in-Bioinformatics-167DA4.svg)](https://doi.org/10.1093/bioinformatics/btw753)
 =====
 
-A lightweight and super fast C/C++ library for sequence alignment using [edit distance](https://en.wikipedia.org/wiki/Edit_distance).
+ A remake created by @nicolapreda of Bomberman official game with C/C++ and SFML library.
 
 Calculating edit distance of two strings is as simple as:
 ```c
