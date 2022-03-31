@@ -1,8 +1,8 @@
 #include <Game.h>
 
-#include <stdio.h>	/* printf, scanf, puts, NULL */
-#include <stdlib.h> /* srand, rand */
-#include <time.h>	/* time */
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 Game::~Game()
 {
@@ -101,6 +101,13 @@ void Game::pollEvents()
 
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space))
 	{
+		bomb.setPosition(player.getPosition().x, player.getPosition().y);
+		if (!bombTexture.loadFromFile("./content/bomb.png"))
+		{
+			cout << "Texture not loaded" << endl;
+		}
+		bomb.setTexture(bombTexture);
+		//add a 2 seconds timer
 	}
 }
 
@@ -117,6 +124,8 @@ void Game::render()
 
 	window->draw(planeTable);
 	window->draw(player);
+	window->draw(bomb);
+
 	window->display();
 }
 

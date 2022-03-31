@@ -21,13 +21,13 @@ private:
 	float xVelocity = 3, yVelocity = 3, xPosition, yPosition;
 	RectangleShape planeTable;
 
-	Sprite grid[187], player;
+	Sprite grid[187], player, bomb;
 
 	// main matrix
 	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
 	int mapMatrix[11][17] = { 0 };
 	// textures
-	sf::Texture permWall, wall, playertexture, grass;
+	sf::Texture permWall, wall, playertexture, grass, bombTexture;
 	// private functions
 	void initGrid();
 	void initRandWalls();
