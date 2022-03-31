@@ -19,6 +19,7 @@ Game::Game()
 	initGrid();
 	initPlaneTable();
 	initPlayer();
+	initEnemies();
 }
 
 bool Game::running()
@@ -65,11 +66,66 @@ void Game::pollEvents()
 				break;
 		}
 	}
+	// move enemies
+	for (int i = 0; i < 4; i++)
+	{
+		//select a random enemy direction and check every collision
+		int randDirection = rand() % 4;
+		switch (randDirection)
+		{
+			case 0:
+
+				enemy[i].move(0, -yEnemyVelocity);
+				// check collision
+				if (checkGridCollision(enemy[i]))
+				{
+					cout << "collision detected" << endl;
+					enemy[i].move(0, yEnemyVelocity);
+				}
+
+				break;
+			case 1:
+
+				enemy[i].move(0, yEnemyVelocity);
+				// check collision
+				if (checkGridCollision(enemy[i]))
+				{
+					cout << "collision detected" << endl;
+
+					enemy[i].move(0, -yEnemyVelocity);
+				}
+				break;
+			case 2:
+
+				enemy[i].move(-xEnemyVelocity, 0);
+				// check collision
+				if (checkGridCollision(enemy[i]))
+				{
+					cout << "collision detected" << endl;
+
+					enemy[i].move(xEnemyVelocity, 0);
+				}
+				break;
+			case 3:
+
+				enemy[i].move(xEnemyVelocity, 0);
+				// check collision
+				if (checkGridCollision(enemy[i]))
+				{
+					cout << "collision detected" << endl;
+
+					enemy[i].move(-xEnemyVelocity, 0);
+				}
+				break;
+			default:
+				break;
+		}
+	}
 
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
 		player.move(-1.0f, 0.0f);
-		if (checkCollision() == true)
+		if (checkGridCollision(player))
 		{
 			player.move(1.0f, 0.0f);
 		}
@@ -77,7 +133,7 @@ void Game::pollEvents()
 	if (Keyboard::isKeyPressed(Keyboard::Key::W))
 	{
 		player.move(0.0f, -1.0f);
-		if (checkCollision() == true)
+		if (checkGridCollision(player))
 		{
 			player.move(0.0f, 1.0f);
 		}
@@ -85,7 +141,7 @@ void Game::pollEvents()
 	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 	{
 		player.move(0.0f, 1.0f);
-		if (checkCollision() == true)
+		if (checkGridCollision(player))
 		{
 			player.move(0.0f, -1.0f);
 		}
@@ -93,7 +149,7 @@ void Game::pollEvents()
 	if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
 		player.move(1.0f, 0.0f);
-		if (checkCollision() == true)
+		if (checkGridCollision(player))
 		{
 			player.move(-1.0f, 0.0f);
 		}
@@ -108,6 +164,7 @@ void Game::pollEvents()
 		}
 		bomb.setTexture(bombTexture);
 		//add a 2 seconds timer
+		bombClock.restart();
 	}
 }
 
@@ -120,6 +177,10 @@ void Game::render()
 	for (int i = 0; i < 187; i++)
 	{
 		window->draw(grid[i]);
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		window->draw(enemy[i]);
 	}
 
 	window->draw(planeTable);
@@ -162,7 +223,6 @@ void Game::initGrid()
 					grid[counter].setTexture(wall);
 					break;
 
-					break;
 				default:
 					break;
 			}
@@ -207,7 +267,20 @@ void Game::initPlayer()
 	player.setPosition(65, 150);
 }
 
-bool Game::checkCollision()
+void Game::initEnemies()
+{
+	for (int i = 0, xPos = 185, yPos = 150; i < 4; i++, xPos += 120, yPos += 120)
+	{
+		if (!enemyTexture.loadFromFile("./content/enemy.png"))
+		{
+			cout << "Texture not loaded" << endl;
+		}
+		enemy[i].setTexture(enemyTexture);
+		enemy[i].setPosition(xPos, yPos);
+	}
+}
+
+bool Game::checkGridCollision(Sprite entity)
 {
 
 	for (int y = 0, counter = 0; y < 11; y++)
@@ -215,7 +288,7 @@ bool Game::checkCollision()
 		for (int x = 0; x < 17; x++, counter++)
 		{
 			//check if collides the entire area of the grid
-			if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
 				if (mapMatrix[y][x] == -1 || mapMatrix[y][x] == 3)
@@ -224,7 +297,6 @@ bool Game::checkCollision()
 				}
 				else
 				{
-					mapMatrix[y][x] = 1;
 					return false;
 				}
 			}

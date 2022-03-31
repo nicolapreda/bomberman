@@ -16,18 +16,19 @@ private:
 	RenderWindow* window;
 	Event event;
 	VideoMode videoMode;
+	Clock bombClock;
 
 	// game objects
-	float xVelocity = 3, yVelocity = 3, xPosition, yPosition;
+	float xEnemyVelocity = 0.4, yEnemyVelocity = 0.4, xPosition, yPosition;
 	RectangleShape planeTable;
 
-	Sprite grid[187], player, bomb;
+	Sprite grid[187], player, bomb, enemy[4];
 
 	// main matrix
 	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
 	int mapMatrix[11][17] = { 0 };
 	// textures
-	sf::Texture permWall, wall, playertexture, grass, bombTexture;
+	sf::Texture permWall, wall, playertexture, grass, bombTexture, enemyTexture;
 	// private functions
 	void initGrid();
 	void initRandWalls();
@@ -37,8 +38,9 @@ private:
 	void initWindow();
 	void updateGrid();
 	void initPlaneTable();
+	void initEnemies();
 
-	bool checkCollision();
+	bool checkGridCollision(Sprite entity);
 
 public:
 	// constructors
