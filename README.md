@@ -1,6 +1,6 @@
 Bomberman
 &middot;
-<!--
+
 [![wakatime](https://wakatime.com/badge/user/65beb3fe-edbf-47a9-a9dc-9253600acc77/project/f86ee28f-1f22-4b44-91e0-9047f56bde1d.svg)](https://wakatime.com/badge/user/65beb3fe-edbf-47a9-a9dc-9253600acc77/project/f86ee28f-1f22-4b44-91e0-9047f56bde1d)
 [![Latest Github release](https://img.shields.io/github/release/nicolapreda/bomberman.svg)](https://img.shields.io/github/release/nicolapreda/bomberman.svg)
 [![Build status of the master branch on Linux/OSX](https://img.shields.io/travis/Martinsos/edlib/master?label=Linux%20%2F%20OSX%20build)](https://travis-ci.com/Martinsos/edlib)
@@ -335,4 +335,3 @@ Ivan Sović (@isovic) - Help with testing and prioritizing features, valuable co
 
 ### What do terms NW, HW and SHW stand for?
 NW stands for Needleman-Wunsch, HW for Hybrid Wunsch, and SHW for Semi Hybrid Wunsch. While NW is a common abbreviation, HW and SHW abbreviations were made up at the very start of this project to describe additional modes of alignment. Later we started using terms "global", "infix" and "prefix" more, as they describe the modes better, but terms NW, HW and SHW are still very present in the project.
--->

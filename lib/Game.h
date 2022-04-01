@@ -20,15 +20,25 @@ private:
 
 	// game objects
 	float xEnemyVelocity = 0.4, yEnemyVelocity = 0.4, xPosition, yPosition;
+	//create enemy directions
+	int enemiesDirection[4];
+
+	int score;
 	RectangleShape planeTable;
 
 	Sprite grid[187], player, bomb, enemy[4];
+	//create a timer
+	Clock gameClock;
 
-	// main matrix
-	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
-	int mapMatrix[11][17] = { 0 };
+	// main font
+	Font font;
 	// textures
 	sf::Texture permWall, wall, playertexture, grass, bombTexture, enemyTexture;
+	sf::Text timerString, scoreString;
+
+	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
+	int mapMatrix[11][17] = { 0 };
+
 	// private functions
 	void initGrid();
 	void initRandWalls();

@@ -70,51 +70,50 @@ void Game::pollEvents()
 	for (int i = 0; i < 4; i++)
 	{
 		//select a random enemy direction and check every collision
-		int randDirection = rand() % 4;
-		switch (randDirection)
+		switch (enemiesDirection[i])
 		{
 			case 0:
 
-				enemy[i].move(0, -yEnemyVelocity);
+				enemy[i].move(0.f, -1.f);
 				// check collision
 				if (checkGridCollision(enemy[i]))
 				{
 					cout << "collision detected" << endl;
-					enemy[i].move(0, yEnemyVelocity);
+					enemiesDirection[i] = 1;
 				}
 
 				break;
 			case 1:
 
-				enemy[i].move(0, yEnemyVelocity);
+				enemy[i].move(0.f, 1.f);
 				// check collision
 				if (checkGridCollision(enemy[i]))
 				{
 					cout << "collision detected" << endl;
 
-					enemy[i].move(0, -yEnemyVelocity);
+					enemiesDirection[i] = 0;
 				}
 				break;
 			case 2:
 
-				enemy[i].move(-xEnemyVelocity, 0);
+				enemy[i].move(-1.f, 0);
 				// check collision
 				if (checkGridCollision(enemy[i]))
 				{
 					cout << "collision detected" << endl;
 
-					enemy[i].move(xEnemyVelocity, 0);
+					enemiesDirection[i] = 3;
 				}
 				break;
 			case 3:
 
-				enemy[i].move(xEnemyVelocity, 0);
+				enemy[i].move(1.f, 0);
 				// check collision
 				if (checkGridCollision(enemy[i]))
 				{
 					cout << "collision detected" << endl;
 
-					enemy[i].move(-xEnemyVelocity, 0);
+					enemiesDirection[i] = 2;
 				}
 				break;
 			default:
@@ -173,19 +172,33 @@ void Game::render()
 	// clear window
 	window->clear(Color(16, 122, 48));
 
-	// draw objects
+	// draw grids
 	for (int i = 0; i < 187; i++)
 	{
 		window->draw(grid[i]);
 	}
+	// draw enemies
 	for (int i = 0; i < 4; i++)
 	{
 		window->draw(enemy[i]);
+		//select random directions
+		int randDirection = rand() % 4;
+		//insert into enemiesDirection
+		enemiesDirection[i] = randDirection;
 	}
 
 	window->draw(planeTable);
+
 	window->draw(player);
 	window->draw(bomb);
+
+	//set timer string
+	timerString.setString("Time: " + to_string(gameClock.getElapsedTime().asSeconds()));
+	window->draw(timerString);
+
+	//set score string
+	scoreString.setString("Score: " + to_string(score));
+	window->draw(scoreString);
 
 	window->display();
 }
@@ -238,6 +251,25 @@ void Game::initPlaneTable()
 	planeTable.setOutlineColor(Color(128, 23, 17));
 	planeTable.setOutlineThickness(2.f);
 	planeTable.setPosition(Vector2f(0, 0));
+
+	//draw the timer
+	//load font
+	if (!font.loadFromFile("./content/ArcadeClassic.ttf"))
+	{
+		cout << "Font not loaded" << endl;
+	}
+	//set the text
+	timerString.setFont(font);
+	timerString.setPosition(Vector2f(10, 10));
+	timerString.setFillColor(Color::White);
+	timerString.setCharacterSize(30);
+	gameClock.restart();
+
+	//set score string
+	scoreString.setFont(font);
+	scoreString.setPosition(Vector2f(10, 50));
+	scoreString.setFillColor(Color::White);
+	scoreString.setCharacterSize(30);
 }
 
 void Game::initRandWalls()
@@ -269,7 +301,7 @@ void Game::initPlayer()
 
 void Game::initEnemies()
 {
-	for (int i = 0, xPos = 185, yPos = 150; i < 4; i++, xPos += 120, yPos += 120)
+	for (int i = 0, xPos = 180, yPos = 145; i < 4; i++, xPos += 120, yPos += 120)
 	{
 		if (!enemyTexture.loadFromFile("./content/enemy.png"))
 		{
