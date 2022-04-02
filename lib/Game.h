@@ -18,12 +18,10 @@ private:
 	VideoMode videoMode;
 	Clock bombClock;
 
-	// game objects
-	float xEnemyVelocity = 0.4, yEnemyVelocity = 0.4, xPosition, yPosition;
 	//create enemy directions
-	int enemiesDirection[4];
+	int enemiesDirection[4], score, level, lastGridEditedX, lastGridEditedY;
 
-	int score;
+	bool bombCountDown;
 	RectangleShape planeTable;
 
 	Sprite grid[187], player, bomb, enemy[4];
@@ -34,7 +32,7 @@ private:
 	Font font;
 	// textures
 	sf::Texture permWall, wall, playertexture, grass, bombTexture, enemyTexture;
-	sf::Text timerString, scoreString;
+	sf::Text timerString, scoreString, levelString;
 
 	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
 	int mapMatrix[11][17] = { 0 };
@@ -46,10 +44,12 @@ private:
 
 	void initializeVariables();
 	void initWindow();
-	void updateGrid();
+
 	void initPlaneTable();
 	void initEnemies();
+	void checkBombCollision();
 
+	void updateGrid(Sprite entity, int type);
 	bool checkGridCollision(Sprite entity);
 
 public:

@@ -20,6 +20,17 @@ Game::Game()
 	initPlaneTable();
 	initPlayer();
 	initEnemies();
+	for (int i = 0; i < 4; i++)
+	{
+		//select random directions
+		int randDirection = rand() % 4;
+		//insert into enemiesDirection
+		enemiesDirection[i] = randDirection;
+	}
+
+	//set level string
+	levelString.setString("Level: " + std::to_string(level));
+	window->draw(levelString);
 }
 
 bool Game::running()
@@ -66,59 +77,68 @@ void Game::pollEvents()
 				break;
 		}
 	}
+
 	// move enemies
 	for (int i = 0; i < 4; i++)
 	{
-		//select a random enemy direction and check every collision
 		switch (enemiesDirection[i])
 		{
 			case 0:
-
-				enemy[i].move(0.f, -1.f);
-				// check collision
+				enemy[i].move(0, -1.f);
+				//check collisions
 				if (checkGridCollision(enemy[i]))
 				{
-					cout << "collision detected" << endl;
-					enemiesDirection[i] = 1;
+					enemy[i].move(0, 1.f);
+					enemiesDirection[i] = rand() % 4;
 				}
+
+				// update grid
+				updateGrid(enemy[i], 2);
 
 				break;
 			case 1:
-
-				enemy[i].move(0.f, 1.f);
-				// check collision
+				enemy[i].move(0, 1.f);
 				if (checkGridCollision(enemy[i]))
 				{
-					cout << "collision detected" << endl;
-
-					enemiesDirection[i] = 0;
+					enemy[i].move(0, -1.f);
+					enemiesDirection[i] = rand() % 4;
 				}
+
+				// update grid
+				updateGrid(enemy[i], 2);
 				break;
 			case 2:
-
 				enemy[i].move(-1.f, 0);
-				// check collision
 				if (checkGridCollision(enemy[i]))
 				{
-					cout << "collision detected" << endl;
-
-					enemiesDirection[i] = 3;
+					enemy[i].move(1.f, 0);
+					enemiesDirection[i] = rand() % 4;
 				}
+
+				// update grid
+				updateGrid(enemy[i], 2);
 				break;
 			case 3:
-
 				enemy[i].move(1.f, 0);
-				// check collision
 				if (checkGridCollision(enemy[i]))
 				{
-					cout << "collision detected" << endl;
-
-					enemiesDirection[i] = 2;
+					enemy[i].move(-1.f, 0);
+					enemiesDirection[i] = rand() % 4;
 				}
+				// update grid
+				updateGrid(enemy[i], 2);
 				break;
 			default:
 				break;
 		}
+	}
+
+	//check if countdown is over
+	if (bombClock.getElapsedTime().asSeconds() > 2 && bombCountDown == true)
+	{
+		window->clear(Color(16, 122, 48));
+		checkBombCollision();
+		bombCountDown = false;
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
@@ -162,7 +182,8 @@ void Game::pollEvents()
 			cout << "Texture not loaded" << endl;
 		}
 		bomb.setTexture(bombTexture);
-		//add a 2 seconds timer
+		// start bomb countdown
+		bombCountDown = true;
 		bombClock.restart();
 	}
 }
@@ -181,10 +202,6 @@ void Game::render()
 	for (int i = 0; i < 4; i++)
 	{
 		window->draw(enemy[i]);
-		//select random directions
-		int randDirection = rand() % 4;
-		//insert into enemiesDirection
-		enemiesDirection[i] = randDirection;
 	}
 
 	window->draw(planeTable);
@@ -270,6 +287,12 @@ void Game::initPlaneTable()
 	scoreString.setPosition(Vector2f(10, 50));
 	scoreString.setFillColor(Color::White);
 	scoreString.setCharacterSize(30);
+
+	//add level
+	levelString.setFont(font);
+	levelString.setPosition(Vector2f(10, 990));
+	levelString.setFillColor(Color::White);
+	levelString.setCharacterSize(30);
 }
 
 void Game::initRandWalls()
@@ -301,15 +324,29 @@ void Game::initPlayer()
 
 void Game::initEnemies()
 {
-	for (int i = 0, xPos = 180, yPos = 145; i < 4; i++, xPos += 120, yPos += 120)
+	for (int i = 0; i < 4; i++)
 	{
 		if (!enemyTexture.loadFromFile("./content/enemy.png"))
 		{
 			cout << "Texture not loaded" << endl;
 		}
 		enemy[i].setTexture(enemyTexture);
-		enemy[i].setPosition(xPos, yPos);
+
+		// set a random position
+		int randPosX = rand() % 17, randPosY = rand() % 11;
+		if (mapMatrix[randPosY][randPosX] != -1 && mapMatrix[randPosY][randPosX] != 3)
+		{
+			enemy[i].setPosition(randPosX * 60, (randPosY * 60) + 84);
+		}
+		else
+		{
+			i--;
+		}
 	}
+}
+
+void Game::checkBombCollision()
+{
 }
 
 bool Game::checkGridCollision(Sprite entity)
@@ -327,12 +364,30 @@ bool Game::checkGridCollision(Sprite entity)
 				{
 					return true;
 				}
-				else
-				{
-					return false;
-				}
 			}
 		}
 	}
 	return false;
+}
+
+void Game::updateGrid(Sprite entity, int type)
+{
+	mapMatrix[lastGridEditedY][lastGridEditedX] = 0;
+
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+			//check if collides the entire area of the grid
+			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+			{
+
+				if (mapMatrix[y][x] == 0)
+				{
+					mapMatrix[y][x] = type;
+					lastGridEditedX = x, lastGridEditedY = y;
+				}
+			}
+		}
+	}
 }
