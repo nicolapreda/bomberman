@@ -136,9 +136,9 @@ void Game::pollEvents()
 	//check if countdown is over
 	if (bombClock.getElapsedTime().asSeconds() > 2 && bombCountDown == true)
 	{
-		window->clear(Color(16, 122, 48));
 		checkBombCollision();
 		bombCountDown = false;
+		bomb.setPosition(-60.f, -60.f);
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
@@ -174,7 +174,7 @@ void Game::pollEvents()
 		}
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key::Space))
+	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && bombCountDown == false)
 	{
 		bomb.setPosition(player.getPosition().x, player.getPosition().y);
 		if (!bombTexture.loadFromFile("./content/bomb.png"))
@@ -251,6 +251,13 @@ void Game::initGrid()
 						cout << "Texture not loaded" << endl;
 					}
 					grid[counter].setTexture(wall);
+					break;
+				case 0:
+					if (!floor.loadFromFile("./content/grass.png"))
+					{
+						cout << "Texture not loaded" << endl;
+					}
+					grid[counter].setTexture(floor);
 					break;
 
 				default:
@@ -347,6 +354,28 @@ void Game::initEnemies()
 
 void Game::checkBombCollision()
 {
+	int posX = bomb.getPosition().x, posY = bomb.getPosition().y;
+
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+			//check if collides the entire area of the grid
+			if (bomb.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					if (mapMatrix[y + i][x] == 3 || mapMatrix[y][x + i] == 3 || mapMatrix[y - i][x] == 3 || mapMatrix[y][x - i] == 3)
+					{
+						mapMatrix[y + i][x] = 0;
+						mapMatrix[y][x + i] = 0;
+						mapMatrix[y - i][x] = 0;
+						mapMatrix[y][x - i] = 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 bool Game::checkGridCollision(Sprite entity)

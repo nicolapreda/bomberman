@@ -31,7 +31,7 @@ private:
 	// main font
 	Font font;
 	// textures
-	sf::Texture permWall, wall, playertexture, grass, bombTexture, enemyTexture;
+	sf::Texture permWall, wall, playertexture, grass, bombTexture, enemyTexture, floor;
 	sf::Text timerString, scoreString, levelString;
 
 	/*0 = terrain, 1 = player, 2 = enemies, -1 = perm walls, 3= walls*/
