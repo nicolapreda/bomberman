@@ -27,6 +27,8 @@ Game::Game()
 		//insert into enemiesDirection
 		enemiesDirection[i] = randDirection;
 	}
+	// init lifes
+	life = 3;
 
 	//set level string
 	levelString.setString("Level: " + std::to_string(level));
@@ -141,6 +143,7 @@ void Game::pollEvents()
 		bomb.setPosition(-60.f, -60.f);
 	}
 
+	// check player movements
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
 		player.move(-1.0f, 0.0f);
@@ -148,6 +151,7 @@ void Game::pollEvents()
 		{
 			player.move(1.0f, 0.0f);
 		}
+		lastKeyPressed = 0;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::W))
 	{
@@ -156,6 +160,7 @@ void Game::pollEvents()
 		{
 			player.move(0.0f, 1.0f);
 		}
+		lastKeyPressed = 1;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 	{
@@ -164,6 +169,7 @@ void Game::pollEvents()
 		{
 			player.move(0.0f, -1.0f);
 		}
+		lastKeyPressed = 2;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
@@ -172,26 +178,52 @@ void Game::pollEvents()
 		{
 			player.move(-1.0f, 0.0f);
 		}
+		lastKeyPressed = 3;
 	}
 
+	// place bomb
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && bombCountDown == false)
 	{
-		bomb.setPosition(player.getPosition().x, player.getPosition().y);
-		if (!bombTexture.loadFromFile("./content/bomb.png"))
+		// place bomb in the last direction
+		switch (lastKeyPressed)
 		{
-			cout << "Texture not loaded" << endl;
+			case 0:
+				bomb.setPosition(player.getPosition().x - 60.f, player.getPosition().y);
+				break;
+			case 1:
+				bomb.setPosition(player.getPosition().x, player.getPosition().y - 60.f);
+				break;
+			case 2:
+				bomb.setPosition(player.getPosition().x, player.getPosition().y + 60.f);
+				break;
+			case 3:
+				bomb.setPosition(player.getPosition().x + 60.f, player.getPosition().y);
+				break;
+			default:
+				break;
 		}
-		bomb.setTexture(bombTexture);
-		// start bomb countdown
-		bombCountDown = true;
-		bombClock.restart();
+		if (checkGridCollision(bomb) == false)
+		{
+			if (!bombTexture.loadFromFile("./content/bomb.png"))
+				cout << "Bomb texture not loaded!" << endl;
+			bomb.setTexture(bombTexture);
+
+			// start bomb countdown
+			bombCountDown = true;
+			bombClock.restart();
+		}
+		else
+		{
+			bomb.setPosition(-60.f, -60.f);
+			bombCountDown = false;
+		}
 	}
 }
 
 void Game::render()
 {
 	// clear window
-	window->clear(Color(16, 122, 48));
+	window->clear();
 
 	// draw grids
 	for (int i = 0; i < 187; i++)
@@ -202,6 +234,19 @@ void Game::render()
 	for (int i = 0; i < 4; i++)
 	{
 		window->draw(enemy[i]);
+	}
+
+	// check player collision with enemies
+	for (int i = 0; i < 4; i++)
+	{
+		if (enemy[i].getGlobalBounds().intersects(player.getGlobalBounds()))
+		{
+			life--;
+		}
+	}
+	if (life == 0)
+	{
+		cout << "Lose";
 	}
 
 	window->draw(planeTable);
@@ -311,10 +356,13 @@ void Game::initRandWalls()
 	{
 		randPosX = rand() % 15 + 1;
 		randPosY = rand() % 9 + 1;
-		if (mapMatrix[randPosY][randPosX] != -1 && mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 1)
+		if ((randPosX != 1 && randPosY != 1) || (randPosX != 1 && randPosY != 2) || (randPosX != 2 && randPosY != 1))
 		{
-			mapMatrix[randPosY][randPosX] = 3;
-			i++;
+			if (mapMatrix[randPosY][randPosX] != -1 && mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 1)
+			{
+				mapMatrix[randPosY][randPosX] = 3;
+				i++;
+			}
 		}
 	}
 }
@@ -354,7 +402,7 @@ void Game::initEnemies()
 
 void Game::checkBombCollision()
 {
-	int posX = bomb.getPosition().x, posY = bomb.getPosition().y;
+	//int posX = bomb.getPosition().x, posY = bomb.getPosition().y;
 
 	for (int y = 0, counter = 0; y < 11; y++)
 	{
@@ -365,17 +413,31 @@ void Game::checkBombCollision()
 			{
 				for (int i = 0; i < 2; i++)
 				{
-					if (mapMatrix[y + i][x] == 3 || mapMatrix[y][x + i] == 3 || mapMatrix[y - i][x] == 3 || mapMatrix[y][x - i] == 3)
+					if (mapMatrix[y + i][x] == 3 || mapMatrix[y + i][x] == 2)
 					{
 						mapMatrix[y + i][x] = 0;
+						score += 100;
+					}
+					if (mapMatrix[y][x + i] == 3 || mapMatrix[y][x + i] == 2)
+					{
 						mapMatrix[y][x + i] = 0;
+						score += 100;
+					}
+					if (mapMatrix[y - i][x] == 3 || mapMatrix[y - i][x] == 2)
+					{
 						mapMatrix[y - i][x] = 0;
+						score += 100;
+					}
+					if (mapMatrix[y][x - i] == 3 || mapMatrix[y][x - i] == 2)
+					{
 						mapMatrix[y][x - i] = 0;
+						score += 100;
 					}
 				}
 			}
 		}
 	}
+	initGrid();
 }
 
 bool Game::checkGridCollision(Sprite entity)
@@ -408,7 +470,7 @@ void Game::updateGrid(Sprite entity, int type)
 		for (int x = 0; x < 17; x++, counter++)
 		{
 			//check if collides the entire area of the grid
-			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()) || entity.getGlobalBounds().intersects(bomb.getGlobalBounds()))
 			{
 
 				if (mapMatrix[y][x] == 0)

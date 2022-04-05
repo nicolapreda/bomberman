@@ -19,7 +19,7 @@ private:
 	Clock bombClock;
 
 	//create enemy directions
-	int enemiesDirection[4], score, level, lastGridEditedX, lastGridEditedY;
+	int enemiesDirection[4], score, level, lastGridEditedX, lastGridEditedY, lastKeyPressed, life;
 
 	bool bombCountDown;
 	RectangleShape planeTable;
