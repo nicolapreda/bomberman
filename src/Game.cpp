@@ -20,31 +20,19 @@ Game::Game()
 	initPlaneTable();
 	initPlayer();
 	initEnemies();
-	for (int i = 0; i < 4; i++)
+
+	// select enemies direction
+	for (int i = 4; i < 10; i++)
 	{
 		//select random directions
 		int randDirection = rand() % 4;
 		//insert into enemiesDirection
 		enemiesDirection[i] = randDirection;
 	}
-	// init lifes
-	life = 3;
+
 	level = 1;
 	//init respawn clock
 	respawnClock.restart();
-
-	//show mapmatrix
-	cout << endl;
-
-	for (int y = 0, counter = 0; y < 11; y++)
-	{
-
-		for (int x = 0; x < 17; x++, counter++)
-		{
-			cout << mapMatrix[y][x] << " ";
-		}
-		cout << endl;
-	}
 }
 
 bool Game::running()
@@ -73,6 +61,7 @@ void Game::initWindow()
 	// set a framerate limit
 	window->setFramerateLimit(144);
 }
+
 void Game::pollEvents()
 {
 	while (window->pollEvent(event))
@@ -93,7 +82,7 @@ void Game::pollEvents()
 	}
 
 	// move enemies
-	for (int i = 0; i < 4; i++)
+	for (int i = 4; i < 10; i++)
 	{
 		switch (enemiesDirection[i])
 		{
@@ -107,7 +96,7 @@ void Game::pollEvents()
 				}
 
 				// update grid
-				updateGrid(enemy[i], 2);
+				updateGrid(enemy[i], i);
 
 				break;
 			case 1:
@@ -119,7 +108,7 @@ void Game::pollEvents()
 				}
 
 				// update grid
-				updateGrid(enemy[i], 2);
+				updateGrid(enemy[i], i);
 				break;
 			case 2:
 				enemy[i].move(-1.f, 0);
@@ -130,7 +119,7 @@ void Game::pollEvents()
 				}
 
 				// update grid
-				updateGrid(enemy[i], 2);
+				updateGrid(enemy[i], i);
 				break;
 			case 3:
 				enemy[i].move(1.f, 0);
@@ -140,7 +129,7 @@ void Game::pollEvents()
 					enemiesDirection[i] = rand() % 4;
 				}
 				// update grid
-				updateGrid(enemy[i], 2);
+				updateGrid(enemy[i], i);
 				break;
 			default:
 				break;
@@ -163,21 +152,7 @@ void Game::pollEvents()
 		{
 			player.move(1.0f, 0.0f);
 		}
-		lastKeyPressed = 0;
 		updateGrid(player, 1);
-
-		//show mapmatrix
-		cout << endl;
-
-		for (int y = 0, counter = 0; y < 11; y++)
-		{
-
-			for (int x = 0; x < 17; x++, counter++)
-			{
-				cout << mapMatrix[y][x] << " ";
-			}
-			cout << endl;
-		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::W))
 	{
@@ -186,21 +161,7 @@ void Game::pollEvents()
 		{
 			player.move(0.0f, 1.0f);
 		}
-		lastKeyPressed = 1;
 		updateGrid(player, 1);
-
-		//show mapmatrix
-		cout << endl;
-
-		for (int y = 0, counter = 0; y < 11; y++)
-		{
-
-			for (int x = 0; x < 17; x++, counter++)
-			{
-				cout << mapMatrix[y][x] << " ";
-			}
-			cout << endl;
-		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 	{
@@ -209,21 +170,7 @@ void Game::pollEvents()
 		{
 			player.move(0.0f, -1.0f);
 		}
-		lastKeyPressed = 2;
 		updateGrid(player, 1);
-
-		//show mapmatrix
-		cout << endl;
-
-		for (int y = 0, counter = 0; y < 11; y++)
-		{
-
-			for (int x = 0; x < 17; x++, counter++)
-			{
-				cout << mapMatrix[y][x] << " ";
-			}
-			cout << endl;
-		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
@@ -232,59 +179,19 @@ void Game::pollEvents()
 		{
 			player.move(-1.0f, 0.0f);
 		}
-		lastKeyPressed = 3;
 		updateGrid(player, 1);
-
-		//show mapmatrix
-		cout << endl;
-
-		for (int y = 0, counter = 0; y < 11; y++)
-		{
-
-			for (int x = 0; x < 17; x++, counter++)
-			{
-				cout << mapMatrix[y][x] << " ";
-			}
-			cout << endl;
-		}
 	}
 
 	// place bomb
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && bombCountDown == false)
 	{
-		// place bomb in the last direction
-		switch (lastKeyPressed)
-		{
-			case 0:
-				bomb.setPosition(player.getPosition().x - 60.f, player.getPosition().y);
-				break;
-			case 1:
-				bomb.setPosition(player.getPosition().x, player.getPosition().y - 60.f);
-				break;
-			case 2:
-				bomb.setPosition(player.getPosition().x, player.getPosition().y + 60.f);
-				break;
-			case 3:
-				bomb.setPosition(player.getPosition().x + 60.f, player.getPosition().y);
-				break;
-			default:
-				break;
-		}
-		if (checkGridCollision(bomb) == false)
-		{
-			if (!bombTexture.loadFromFile("./content/bomb.png"))
-				cout << "Bomb texture not loaded!" << endl;
-			bomb.setTexture(bombTexture);
-
-			// start bomb countdown
-			bombCountDown = true;
-			bombClock.restart();
-		}
-		else
-		{
-			bomb.setPosition(-60.f, -60.f);
-			bombCountDown = false;
-		}
+		bomb.setPosition(player.getPosition().x, player.getPosition().y);
+		if (!bombTexture.loadFromFile("./content/bomb.png"))
+			cout << "Bomb texture not loaded!" << endl;
+		bomb.setTexture(bombTexture);
+		// start bomb countdown
+		bombCountDown = true;
+		bombClock.restart();
 	}
 }
 
@@ -299,13 +206,13 @@ void Game::render()
 		window->draw(grid[i]);
 	}
 	// draw enemies
-	for (int i = 0; i < 4; i++)
+	for (int i = 4; i < 10; i++)
 	{
 		window->draw(enemy[i]);
 	}
 
 	// check player collision with enemies
-	for (int i = 0; i < 4; i++)
+	for (int i = 4; i < 10; i++)
 	{
 		if (enemy[i].getGlobalBounds().intersects(player.getGlobalBounds()) && respawnClock.getElapsedTime().asSeconds() > 2)
 		{
@@ -314,16 +221,22 @@ void Game::render()
 		}
 	}
 
-	if (life == 0)
+	/*if (life <= 0)
+	{
+		window->close();
+	}*/
+
+	// draw objects
+	window->draw(planeTable);
+	clockInt = gameClock.getElapsedTime().asSeconds();
+	timer = 140;
+	if (clockInt > timer)
 	{
 		window->close();
 	}
 
-	// draw objects
-	window->draw(planeTable);
-
 	//set timer string
-	timerString.setString("Time  " + to_string(gameClock.getElapsedTime().asSeconds()));
+	timerString.setString("Time  " + to_string(timer - clockInt));
 	window->draw(timerString);
 
 	//set score string
@@ -342,6 +255,21 @@ void Game::render()
 	window->draw(bomb);
 
 	window->display();
+
+	//show mapmatrix
+	cout << endl;
+
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+
+		for (int x = 0; x < 17; x++, counter++)
+		{
+			cout << mapMatrix[y][x] << " ";
+		}
+		cout << endl;
+	}
+
+	system("clear");
 }
 
 void Game::initGrid()
@@ -351,25 +279,26 @@ void Game::initGrid()
 	{
 		for (int x = 0; x < 17; x++, counter++, xPos += 60)
 		{
+			// set permanent walls
 			if (x % 2 == 0 && y % 2 == 0)
 			{
-				mapMatrix[y][x] = 4;
+				mapMatrix[y][x] = 3;
 			}
 			else if (y == 0 || x == 0 || x == 16 || y == 10)
 			{
-				mapMatrix[y][x] = 4;
+				mapMatrix[y][x] = 3;
 			}
 
 			switch (mapMatrix[y][x])
 			{
-				case 4:
+				case 3:
 					if (!permWall.loadFromFile("./content/perm_wall.png"))
 					{
 						cout << "Texture not loaded" << endl;
 					}
 					grid[counter].setTexture(permWall);
 					break;
-				case 3:
+				case 2:
 					if (!wall.loadFromFile("./content/wall.png"))
 					{
 						cout << "Texture not loaded" << endl;
@@ -407,30 +336,16 @@ void Game::initPlaneTable()
 		cout << "Font not loaded" << endl;
 	}
 
-	//add level string
-	levelString.setFont(font);
-	levelString.setPosition(Vector2f(800.f, 50.f));
-	levelString.setFillColor(Color::White);
-	levelString.setCharacterSize(30);
-
-	//add life string
-	lifeString.setFont(font);
-	lifeString.setPosition(Vector2f(800.f, 10.f));
-	lifeString.setFillColor(Color::White);
-	lifeString.setCharacterSize(30);
-
-	//set the text
-	timerString.setFont(font);
-	timerString.setPosition(Vector2f(10.f, 10.f));
-	timerString.setFillColor(Color::White);
-	timerString.setCharacterSize(30);
+	//set score string
+	setStringTable(scoreString, 10, 50);
+	//set timer string
+	setStringTable(timerString, 10, 10);
 	gameClock.restart();
 
-	//set score string
-	scoreString.setFont(font);
-	scoreString.setPosition(Vector2f(10.f, 50.f));
-	scoreString.setFillColor(Color::White);
-	scoreString.setCharacterSize(30);
+	//set life string
+	setStringTable(lifeString, 800, 10);
+	//set level string
+	setStringTable(levelString, 800, 50);
 }
 
 void Game::initRandWalls()
@@ -442,11 +357,11 @@ void Game::initRandWalls()
 	{
 		randPosX = rand() % 15 + 1;
 		randPosY = rand() % 9 + 1;
-		if ((randPosX != 1 && randPosY != 1) || (randPosX != 1 && randPosY != 2) || (randPosX != 2 && randPosY != 1))
+		if ((randPosX != 1 && randPosY != 1) && (randPosX != 1 && randPosY != 2) && (randPosX != 2 && randPosY != 1))
 		{
-			if (mapMatrix[randPosY][randPosX] != 4 && mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 1)
+			if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 2 && mapMatrix[randPosY][randPosX] != 1)
 			{
-				mapMatrix[randPosY][randPosX] = 3;
+				mapMatrix[randPosY][randPosX] = 2;
 				i++;
 			}
 		}
@@ -455,29 +370,30 @@ void Game::initRandWalls()
 
 void Game::initPlayer()
 {
-	if (!playertexture.loadFromFile("./content/main-Sheet.png"))
+	// load texture
+	if (!playerTexture.loadFromFile("./content/main-Sheet.png"))
 	{
-		cout << "Texture not loaded" << endl;
+		cout << "Texture player not loaded" << endl;
 	}
-	player.setTexture(playertexture);
+	player.setTexture(playerTexture);
 	player.setPosition(65, 150);
 }
 
 void Game::initEnemies()
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		if (!enemyTexture.loadFromFile("./content/enemy.png"))
 		{
 			cout << "Texture not loaded" << endl;
 		}
-		enemy[i].setTexture(enemyTexture);
+		enemy[i + 4].setTexture(enemyTexture);
 
 		// set a random position
 		int randPosX = rand() % 17, randPosY = rand() % 11;
-		if (mapMatrix[randPosY][randPosX] != 4 && mapMatrix[randPosY][randPosX] != 3)
+		if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 2)
 		{
-			enemy[i].setPosition(randPosX * 60, (randPosY * 60) + 84);
+			enemy[i + 4].setPosition(randPosX * 60, (randPosY * 60) + 84);
 		}
 		else
 		{
@@ -488,8 +404,6 @@ void Game::initEnemies()
 
 void Game::checkDestroyedItems()
 {
-	//int posX = bomb.getPosition().x, posY = bomb.getPosition().y;
-
 	for (int y = 0, counter = 0; y < 11; y++)
 	{
 		for (int x = 0; x < 17; x++, counter++)
@@ -497,44 +411,51 @@ void Game::checkDestroyedItems()
 			//check if collides the entire area of the grid
 			if (bomb.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
-				for (int i = 0; i < 2; i++)
+				for (int i = 1; i < 3; i++)
 				{
-					if (mapMatrix[y + i][x] == 3 || mapMatrix[y + i][x] == 2)
+					if (mapMatrix[y + i][x] == 2 || mapMatrix[y + i][x] > 3)
 					{
 						mapMatrix[y + i][x] = 0;
 						score += 100;
 					}
-					if (mapMatrix[y][x + i] == 3 || mapMatrix[y][x + i] == 2)
+					if (mapMatrix[y][x + i] == 2 || mapMatrix[y][x + i] > 3)
 					{
 						mapMatrix[y][x + i] = 0;
 						score += 100;
 					}
-					if (mapMatrix[y - i][x] == 3 || mapMatrix[y - i][x] == 2)
+					if (mapMatrix[y - i][x] == 2 || mapMatrix[y - i][x] > 3)
 					{
 						mapMatrix[y - i][x] = 0;
 						score += 100;
 					}
-					if (mapMatrix[y][x - i] == 3 || mapMatrix[y][x - i] == 2)
+					if (mapMatrix[y][x - i] == 2 || mapMatrix[y][x - i] > 3)
 					{
 						mapMatrix[y][x - i] = 0;
 						score += 100;
 					}
+
+					if (mapMatrix[y + i][x] == 1)
+					{
+						life--;
+					}
+					if (mapMatrix[y][x + i] == 1)
+					{
+						life--;
+					}
+					if (mapMatrix[y - i][x] == 1)
+					{
+						life--;
+					}
+					if (mapMatrix[y][x - i] == 1)
+					{
+						life--;
+					}
 				}
+				return;
 			}
 		}
 	}
-	//show mapmatrix
-	cout << endl;
 
-	for (int y = 0, counter = 0; y < 11; y++)
-	{
-
-		for (int x = 0; x < 17; x++, counter++)
-		{
-			cout << mapMatrix[y][x] << " ";
-		}
-		cout << endl;
-	}
 	initGrid();
 }
 
@@ -549,7 +470,7 @@ bool Game::checkGridCollision(Sprite entity)
 			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
-				if (mapMatrix[y][x] == 4 || mapMatrix[y][x] == 3)
+				if (mapMatrix[y][x] == 3 || mapMatrix[y][x] == 2)
 				{
 					return true;
 				}
@@ -561,7 +482,6 @@ bool Game::checkGridCollision(Sprite entity)
 
 void Game::updateGrid(Sprite entity, int type)
 {
-	mapMatrix[lastGridEditedY][lastGridEditedX] = 0;
 
 	for (int y = 0, counter = 0; y < 11; y++)
 	{
@@ -574,7 +494,23 @@ void Game::updateGrid(Sprite entity, int type)
 				if (mapMatrix[y][x] == 0)
 				{
 					mapMatrix[y][x] = type;
-					lastGridEditedX = x, lastGridEditedY = y;
+				}
+
+				else if (mapMatrix[y - 1][x] == type)
+				{
+					mapMatrix[y - 1][x] = 0;
+				}
+				else if (mapMatrix[y][x - 1] == type)
+				{
+					mapMatrix[y][x - 1] = 0;
+				}
+				else if (mapMatrix[y + 1][x] == type)
+				{
+					mapMatrix[y + 1][x] = 0;
+				}
+				else if (mapMatrix[y][x + 1] == type)
+				{
+					mapMatrix[y][x + 1] = 0;
 				}
 			}
 		}
@@ -588,4 +524,12 @@ bool Game::checkBombCollision(Sprite entity)
 		return true;
 	}
 	return false;
+}
+
+void Game::setStringTable(Text string, int posX, int posY)
+{
+	string.setFont(font);
+	string.setPosition(Vector2f(posX, posY));
+	string.setFillColor(Color::White);
+	string.setCharacterSize(30);
 }

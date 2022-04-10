@@ -1,6 +1,6 @@
 #include "Platform/Platform.hpp"
 
-// rand libraries
+// libraries for "rand" function
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -19,22 +19,22 @@ private:
 	Clock bombClock;
 
 	//create enemy directions
-	int enemiesDirection[4], score, level, lastGridEditedX = 1, lastGridEditedY = 1, lastKeyPressed, life;
+	int enemiesDirection[4], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life = 3, clockInt, timer;
 
 	bool bombCountDown;
 	RectangleShape planeTable;
 
-	Sprite grid[187], player, bomb, enemy[4];
+	Sprite grid[187], player, bomb, enemy[10];
 	//create a timer
 	Clock gameClock, respawnClock;
 
 	// main font
 	Font font;
 	// textures
-	sf::Texture permWall, wall, playertexture, grass, bombTexture, enemyTexture, floor;
+	sf::Texture permWall, wall, playerTexture, grass, bombTexture, enemyTexture, floor;
 	sf::Text timerString, scoreString, levelString, lifeString;
 
-	/*0 = terrain, 1 = player, 2 = enemies, 4 = perm walls, 3= walls*/
+	/*0 = terrain, 1 = player, 3 = perm walls, 2= walls, > 3 = enemies*/
 	int mapMatrix[11][17] = { 0 };
 
 	// private functions
@@ -47,6 +47,7 @@ private:
 
 	void initPlaneTable();
 	void initEnemies();
+	void setStringTable(Text string, int posX, int posY);
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);
