@@ -19,19 +19,19 @@ private:
 	Clock bombClock;
 
 	//create enemy directions
-	int enemiesDirection[4], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life = 3, clockInt, timer;
+	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed;
 
-	bool bombCountDown;
+	bool bombCountDown, isDoorPlaced, isKeyPlaced;
 	RectangleShape planeTable;
 
-	Sprite grid[187], player, bomb, enemy[10];
+	Sprite grid[187], player, bomb, enemy[10], door, key;
 	//create a timer
 	Clock gameClock, respawnClock;
 
 	// main font
 	Font font;
 	// textures
-	sf::Texture permWall, wall, playerTexture, grass, bombTexture, enemyTexture, floor;
+	sf::Texture permWall, wall, playerTexture, grass, bombTexture, enemyTexture, floor, doorTexture, keyTexture;
 	sf::Text timerString, scoreString, levelString, lifeString;
 
 	/*0 = terrain, 1 = player, 3 = perm walls, 2= walls, > 3 = enemies*/
@@ -39,7 +39,6 @@ private:
 
 	// private functions
 	void initGrid();
-	void initRandWalls();
 	void initPlayer();
 
 	void initializeVariables();
@@ -47,12 +46,12 @@ private:
 
 	void initPlaneTable();
 	void initEnemies();
-	void setStringTable(Text string, int posX, int posY);
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);
 	bool checkGridCollision(Sprite entity);
 	bool checkBombCollision(Sprite entity);
+	bool checkPlayerBombCollision();
 
 public:
 	// constructors

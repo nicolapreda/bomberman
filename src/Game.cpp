@@ -15,7 +15,6 @@ Game::Game()
 	initWindow();
 
 	// init game objects
-	initRandWalls();
 	initGrid();
 	initPlaneTable();
 	initPlayer();
@@ -30,7 +29,6 @@ Game::Game()
 		enemiesDirection[i] = randDirection;
 	}
 
-	level = 1;
 	//init respawn clock
 	respawnClock.restart();
 }
@@ -55,8 +53,11 @@ void Game::initWindow()
 {
 	videoMode.height = 730;
 	videoMode.width = 1020;
-
-	window = new RenderWindow(videoMode, "Bomberman", Style::Close);
+	// init main variables
+	level = 1;
+	life = 3;
+	score = 0;
+	window = new RenderWindow(videoMode, "Bomberman | Level " + to_string(level), Style::Close);
 
 	// set a framerate limit
 	window->setFramerateLimit(144);
@@ -82,6 +83,7 @@ void Game::pollEvents()
 	}
 
 	// move enemies
+
 	for (int i = 4; i < 10; i++)
 	{
 		switch (enemiesDirection[i])
@@ -145,39 +147,56 @@ void Game::pollEvents()
 	}
 
 	// check player movements
+
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
-		player.move(-1.0f, 0.0f);
-		if (checkGridCollision(player) || checkBombCollision(player))
+		if (checkPlayerBombCollision() == false)
 		{
-			player.move(1.0f, 0.0f);
+
+			player.move(-1.0f, 0.0f);
+			if (checkGridCollision(player) || checkBombCollision(player) == true)
+			{
+				player.move(1.0f, 0.0f);
+			}
 		}
 		updateGrid(player, 1);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::W))
 	{
-		player.move(0.0f, -1.0f);
-		if (checkGridCollision(player) || checkBombCollision(player))
+		if (checkPlayerBombCollision() == false)
 		{
-			player.move(0.0f, 1.0f);
+			player.move(0.0f, -1.0f);
+			if (checkGridCollision(player) || checkBombCollision(player) == true)
+			{
+				player.move(0.0f, 1.0f);
+			}
 		}
+
 		updateGrid(player, 1);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 	{
-		player.move(0.0f, 1.0f);
-		if (checkGridCollision(player) || checkBombCollision(player))
+		if (checkPlayerBombCollision() == false)
 		{
-			player.move(0.0f, -1.0f);
+
+			player.move(0.0f, 1.0f);
+			if (checkGridCollision(player) || checkBombCollision(player) == true)
+			{
+				player.move(0.0f, -1.0f);
+			}
 		}
 		updateGrid(player, 1);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
-		player.move(1.0f, 0.0f);
-		if (checkGridCollision(player) || checkBombCollision(player))
+		if (checkPlayerBombCollision() == false)
 		{
-			player.move(-1.0f, 0.0f);
+
+			player.move(1.0f, 0.0f);
+			if (checkGridCollision(player) || checkBombCollision(player) == true)
+			{
+				player.move(-1.0f, 0.0f);
+			}
 		}
 		updateGrid(player, 1);
 	}
@@ -221,10 +240,11 @@ void Game::render()
 		}
 	}
 
-	/*if (life <= 0)
+	// game over if life is 0
+	if (life <= 0)
 	{
 		window->close();
-	}*/
+	}
 
 	// draw objects
 	window->draw(planeTable);
@@ -268,12 +288,13 @@ void Game::render()
 		}
 		cout << endl;
 	}
-
-	system("clear");
 }
 
 void Game::initGrid()
 {
+	srand(time(NULL));
+	int nWalls = 20, randPosX, randPosY, randPosDoorX, randPosDoorY, randPosKeyY, randPosKeyX;
+
 	int yPos = 84, xPos = 0;
 	for (int y = 0, counter = 0; y < 11; y++, yPos += 60, xPos = 0)
 	{
@@ -298,13 +319,6 @@ void Game::initGrid()
 					}
 					grid[counter].setTexture(permWall);
 					break;
-				case 2:
-					if (!wall.loadFromFile("./content/wall.png"))
-					{
-						cout << "Texture not loaded" << endl;
-					}
-					grid[counter].setTexture(wall);
-					break;
 				case 0:
 					if (!floor.loadFromFile("./content/grass.png"))
 					{
@@ -317,6 +331,61 @@ void Game::initGrid()
 					break;
 			}
 			grid[counter].setPosition(xPos, yPos);
+		}
+	}
+	for (int i = 0; i < nWalls;)
+	{
+		randPosX = rand() % 17;
+		randPosY = rand() % 11;
+		// exclude spawnpoint
+		if ((randPosX != 1 && randPosY != 1) && (randPosX != 1 && randPosY != 2) && (randPosX != 2 && randPosY != 1))
+		{
+			if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 2)
+			{
+				mapMatrix[randPosY][randPosX] = 2;
+
+				i++;
+			}
+		}
+	}
+	for (int y = 0, counter = 0; y < 11; y++, yPos += 60, xPos = 0)
+	{
+		for (int x = 0; x < 17; x++, counter++, xPos += 60)
+		{
+			randPosDoorX = rand() % 17;
+			randPosDoorY = rand() % 11;
+
+			randPosKeyY = rand() % 11;
+			randPosKeyX = rand() % 17;
+
+			if (mapMatrix[randPosDoorY][randPosDoorX] == 2 || isDoorPlaced == false)
+			{
+				if (!doorTexture.loadFromFile("./content/door.jpg"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				door.setTexture(doorTexture);
+				door.setPosition(xPos, yPos);
+				isDoorPlaced = true;
+			}
+			if (mapMatrix[randPosKeyY][randPosKeyX] == 2 || isKeyPlaced == false)
+			{
+				if (!keyTexture.loadFromFile("./content/door.jpg"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				key.setTexture(keyTexture);
+				key.setPosition(xPos, yPos);
+				isKeyPlaced = true;
+			}
+			if (mapMatrix[y][x] == 2)
+			{
+				if (!wall.loadFromFile("./content/wall.png"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				grid[counter].setTexture(wall);
+			}
 		}
 	}
 }
@@ -337,35 +406,29 @@ void Game::initPlaneTable()
 	}
 
 	//set score string
-	setStringTable(scoreString, 10, 50);
+	scoreString.setFont(font);
+	scoreString.setPosition(Vector2f(10.f, 50.f));
+	scoreString.setFillColor(Color::White);
+	scoreString.setCharacterSize(30);
+
 	//set timer string
-	setStringTable(timerString, 10, 10);
+	timerString.setFont(font);
+	timerString.setPosition(Vector2f(10.f, 10.f));
+	timerString.setFillColor(Color::White);
+	timerString.setCharacterSize(30);
 	gameClock.restart();
 
 	//set life string
-	setStringTable(lifeString, 800, 10);
+	lifeString.setFont(font);
+	lifeString.setPosition(Vector2f(800.f, 10.f));
+	lifeString.setFillColor(Color::White);
+	lifeString.setCharacterSize(30);
+
 	//set level string
-	setStringTable(levelString, 800, 50);
-}
-
-void Game::initRandWalls()
-{
-	srand(time(NULL));
-	int nWalls = 30, randPosX, randPosY;
-
-	for (int i = 0; i < nWalls;)
-	{
-		randPosX = rand() % 15 + 1;
-		randPosY = rand() % 9 + 1;
-		if ((randPosX != 1 && randPosY != 1) && (randPosX != 1 && randPosY != 2) && (randPosX != 2 && randPosY != 1))
-		{
-			if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 2 && mapMatrix[randPosY][randPosX] != 1)
-			{
-				mapMatrix[randPosY][randPosX] = 2;
-				i++;
-			}
-		}
-	}
+	levelString.setFont(font);
+	levelString.setPosition(Vector2f(800.f, 50.f));
+	levelString.setFillColor(Color::White);
+	levelString.setCharacterSize(30);
 }
 
 void Game::initPlayer()
@@ -376,7 +439,7 @@ void Game::initPlayer()
 		cout << "Texture player not loaded" << endl;
 	}
 	player.setTexture(playerTexture);
-	player.setPosition(65, 150);
+	player.setPosition(61.f, 144.f);
 }
 
 void Game::initEnemies()
@@ -415,23 +478,31 @@ void Game::checkDestroyedItems()
 				{
 					if (mapMatrix[y + i][x] == 2 || mapMatrix[y + i][x] > 3)
 					{
-						mapMatrix[y + i][x] = 0;
 						score += 100;
+						enemy[mapMatrix[y + i][x]].setPosition(-60.f, -60.f);
+						enemiesDestroyed++;
+						mapMatrix[y + i][x] = 0;
 					}
 					if (mapMatrix[y][x + i] == 2 || mapMatrix[y][x + i] > 3)
 					{
-						mapMatrix[y][x + i] = 0;
 						score += 100;
+						enemy[mapMatrix[y][x + i]].setPosition(-60.f, -60.f);
+						enemiesDestroyed++;
+						mapMatrix[y][x + i] = 0;
 					}
 					if (mapMatrix[y - i][x] == 2 || mapMatrix[y - i][x] > 3)
 					{
-						mapMatrix[y - i][x] = 0;
 						score += 100;
+						enemy[mapMatrix[y - i][x]].setPosition(-60.f, -60.f);
+						enemiesDestroyed++;
+						mapMatrix[y - i][x] = 0;
 					}
 					if (mapMatrix[y][x - i] == 2 || mapMatrix[y][x - i] > 3)
 					{
-						mapMatrix[y][x - i] = 0;
 						score += 100;
+						enemy[mapMatrix[y][x - i]].setPosition(-60.f, -60.f);
+						enemiesDestroyed++;
+						mapMatrix[y][x - i] = 0;
 					}
 
 					if (mapMatrix[y + i][x] == 1)
@@ -450,13 +521,12 @@ void Game::checkDestroyedItems()
 					{
 						life--;
 					}
+					initGrid();
 				}
 				return;
 			}
 		}
 	}
-
-	initGrid();
 }
 
 bool Game::checkGridCollision(Sprite entity)
@@ -488,7 +558,7 @@ void Game::updateGrid(Sprite entity, int type)
 		for (int x = 0; x < 17; x++, counter++)
 		{
 			//check if collides the entire area of the grid
-			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()) || entity.getGlobalBounds().intersects(bomb.getGlobalBounds()))
+			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
 				if (mapMatrix[y][x] == 0)
@@ -496,19 +566,19 @@ void Game::updateGrid(Sprite entity, int type)
 					mapMatrix[y][x] = type;
 				}
 
-				else if (mapMatrix[y - 1][x] == type)
+				if (mapMatrix[y - 1][x] == type)
 				{
 					mapMatrix[y - 1][x] = 0;
 				}
-				else if (mapMatrix[y][x - 1] == type)
+				if (mapMatrix[y][x - 1] == type)
 				{
 					mapMatrix[y][x - 1] = 0;
 				}
-				else if (mapMatrix[y + 1][x] == type)
+				if (mapMatrix[y + 1][x] == type)
 				{
 					mapMatrix[y + 1][x] = 0;
 				}
-				else if (mapMatrix[y][x + 1] == type)
+				if (mapMatrix[y][x + 1] == type)
 				{
 					mapMatrix[y][x + 1] = 0;
 				}
@@ -526,10 +596,37 @@ bool Game::checkBombCollision(Sprite entity)
 	return false;
 }
 
-void Game::setStringTable(Text string, int posX, int posY)
+bool Game::checkPlayerBombCollision()
 {
-	string.setFont(font);
-	string.setPosition(Vector2f(posX, posY));
-	string.setFillColor(Color::White);
-	string.setCharacterSize(30);
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+			//check if collides the entire area of the grid
+			if (bomb.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+			{
+
+				if (player.getGlobalBounds().intersects(bomb.getGlobalBounds()))
+				{
+					if (mapMatrix[y - 1][x] == 1)
+					{
+						return true;
+					}
+					if (mapMatrix[y][x - 1] == 1)
+					{
+						return true;
+					}
+					if (mapMatrix[y + 1][x] == 1)
+					{
+						return true;
+					}
+					if (mapMatrix[y][x + 1] == 1)
+					{
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
