@@ -150,54 +150,46 @@ void Game::pollEvents()
 
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
-		if (checkPlayerBombCollision() == false)
-		{
 
-			player.move(-1.0f, 0.0f);
-			if (checkGridCollision(player) || checkBombCollision(player) == true)
-			{
-				player.move(1.0f, 0.0f);
-			}
+		player.move(-1.0f, 0.0f);
+		if (checkGridCollision(player))
+		{
+			player.move(1.0f, 0.0f);
 		}
+
 		updateGrid(player, 1);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::W))
 	{
-		if (checkPlayerBombCollision() == false)
+
+		player.move(0.0f, -1.0f);
+		if (checkGridCollision(player))
 		{
-			player.move(0.0f, -1.0f);
-			if (checkGridCollision(player) || checkBombCollision(player) == true)
-			{
-				player.move(0.0f, 1.0f);
-			}
+			player.move(0.0f, 1.0f);
 		}
 
 		updateGrid(player, 1);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::S))
 	{
-		if (checkPlayerBombCollision() == false)
-		{
 
-			player.move(0.0f, 1.0f);
-			if (checkGridCollision(player) || checkBombCollision(player) == true)
-			{
-				player.move(0.0f, -1.0f);
-			}
+		player.move(0.0f, 1.0f);
+		if (checkGridCollision(player))
+		{
+			player.move(0.0f, -1.0f);
 		}
+
 		updateGrid(player, 1);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key::D))
 	{
-		if (checkPlayerBombCollision() == false)
-		{
 
-			player.move(1.0f, 0.0f);
-			if (checkGridCollision(player) || checkBombCollision(player) == true)
-			{
-				player.move(-1.0f, 0.0f);
-			}
+		player.move(1.0f, 0.0f);
+		if (checkGridCollision(player))
+		{
+			player.move(-1.0f, 0.0f);
 		}
+
 		updateGrid(player, 1);
 	}
 
@@ -521,7 +513,7 @@ void Game::checkDestroyedItems()
 					{
 						life--;
 					}
-					initGrid();
+					updateGrass();
 				}
 				return;
 			}
@@ -587,6 +579,26 @@ void Game::updateGrid(Sprite entity, int type)
 	}
 }
 
+void Game::updateGrass()
+{
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+
+			// update grass
+			if (mapMatrix[y][x] == 0)
+			{
+				if (!floor.loadFromFile("./content/grass.png"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				grid[counter].setTexture(floor);
+			}
+		}
+	}
+}
+
 bool Game::checkBombCollision(Sprite entity)
 {
 	if (entity.getGlobalBounds().intersects(bomb.getGlobalBounds()))
@@ -606,24 +618,13 @@ bool Game::checkPlayerBombCollision()
 			if (bomb.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
-				if (player.getGlobalBounds().intersects(bomb.getGlobalBounds()))
+				if (mapMatrix[y][x] == 1)
 				{
-					if (mapMatrix[y - 1][x] == 1)
-					{
-						return true;
-					}
-					if (mapMatrix[y][x - 1] == 1)
-					{
-						return true;
-					}
-					if (mapMatrix[y + 1][x] == 1)
-					{
-						return true;
-					}
-					if (mapMatrix[y][x + 1] == 1)
-					{
-						return true;
-					}
+					return false;
+				}
+				else
+				{
+					return true;
 				}
 			}
 		}

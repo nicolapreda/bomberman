@@ -46,6 +46,7 @@ private:
 
 	void initPlaneTable();
 	void initEnemies();
+	void updateGrass();
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);
