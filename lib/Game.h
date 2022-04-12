@@ -19,7 +19,7 @@ private:
 	Clock bombClock;
 
 	//create enemy directions
-	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed;
+	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed;
 
 	bool bombCountDown, isDoorPlaced, isKeyPlaced;
 	RectangleShape planeTable;
@@ -47,6 +47,7 @@ private:
 	void initPlaneTable();
 	void initEnemies();
 	void updateGrass();
+	bool checkBombPlaceCollision();
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);
