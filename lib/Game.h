@@ -21,7 +21,7 @@ private:
 	//create enemy directions
 	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed;
 
-	bool bombCountDown, isDoorPlaced, isKeyPlaced;
+	bool bombCountDown, isDoorPlaced, isKeyPlaced, isKeyRevealed, isDoorRevealed, isKeyUnlocked;
 	RectangleShape planeTable;
 
 	Sprite grid[187], player, bomb, enemy[10], door, key;
@@ -46,14 +46,13 @@ private:
 
 	void initPlaneTable();
 	void initEnemies();
-	void updateGrass();
+	void updateObjects();
 	bool checkBombPlaceCollision();
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);
 	bool checkGridCollision(Sprite entity);
 	bool checkBombCollision(Sprite entity);
-	bool checkPlayerBombCollision();
 
 public:
 	// constructors

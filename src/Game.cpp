@@ -53,6 +53,8 @@ void Game::initWindow()
 {
 	videoMode.height = 730;
 	videoMode.width = 1020;
+	isKeyRevealed = false;
+	isDoorRevealed = false;
 	// init main variables
 	level = 1;
 	life = 3;
@@ -305,6 +307,22 @@ void Game::render()
 		}
 		cout << endl;
 	}
+
+	// check level win
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+			//check if collides the entire area of the grid
+			if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+
+				if (isKeyUnlocked == true && mapMatrix[y][x] == 12)
+				{
+					cout << "You win!! OwO" << endl;
+					window->close();
+				}
+		}
+	}
 }
 
 void Game::initGrid()
@@ -365,37 +383,28 @@ void Game::initGrid()
 			}
 		}
 	}
+
 	for (int y = 0, counter = 0; y < 11; y++, yPos += 60, xPos = 0)
 	{
 		for (int x = 0; x < 17; x++, counter++, xPos += 60)
 		{
-			randPosDoorX = rand() % 17;
 			randPosDoorY = rand() % 11;
+			randPosDoorX = rand() % 17;
 
 			randPosKeyY = rand() % 11;
 			randPosKeyX = rand() % 17;
 
-			if (mapMatrix[randPosDoorY][randPosDoorX] == 2 || isDoorPlaced == false)
+			if (mapMatrix[randPosDoorY][randPosDoorX] == 2 && isDoorPlaced == false)
 			{
-				if (!doorTexture.loadFromFile("./content/door.jpg"))
-				{
-					cout << "Texture not loaded" << endl;
-				}
-				door.setTexture(doorTexture);
-				door.setPosition(xPos, yPos);
+				mapMatrix[randPosDoorY][randPosDoorX] = 11;
 				isDoorPlaced = true;
 			}
-			if (mapMatrix[randPosKeyY][randPosKeyX] == 2 || isKeyPlaced == false)
+			if (mapMatrix[randPosKeyY][randPosKeyX] == 2 && isKeyPlaced == false)
 			{
-				if (!keyTexture.loadFromFile("./content/door.jpg"))
-				{
-					cout << "Texture not loaded" << endl;
-				}
-				key.setTexture(keyTexture);
-				key.setPosition(xPos, yPos);
+				mapMatrix[randPosKeyY][randPosKeyX] = 12;
 				isKeyPlaced = true;
 			}
-			if (mapMatrix[y][x] == 2)
+			if (mapMatrix[y][x] == 2 || mapMatrix[y][x] == 11 || mapMatrix[y][x] == 12)
 			{
 				if (!wall.loadFromFile("./content/wall.png"))
 				{
@@ -493,52 +502,112 @@ void Game::checkDestroyedItems()
 			{
 				for (int i = 1; i < 3; i++)
 				{
-					if (mapMatrix[y + i][x] == 2 || (mapMatrix[y + i][x] > 3 && mapMatrix[y + i][x] < 11))
+					if (mapMatrix[y + i][x] == 2 || (mapMatrix[y + i][x] > 3 && mapMatrix[y + i][x] < 13))
 					{
-						score += 100;
-						enemy[mapMatrix[y + i][x]].setPosition(-60.f, -60.f);
-						enemiesDestroyed++;
-						mapMatrix[y + i][x] = 0;
+						if (mapMatrix[y + i - 1][x] == 3)
+							return;
+						else
+						{
+							score += 100;
+							enemy[mapMatrix[y + i][x]].setPosition(-60.f, -60.f);
+							if (mapMatrix[y + i][x] == 11)
+							{
+								isDoorRevealed = true;
+							}
+							else if (mapMatrix[y + i][x] == 12)
+							{
+								//isKeyRevealed = true;
+							}
+							else if (mapMatrix[y + i][x] == 1)
+							{
+								life--;
+							}
+							else
+							{
+								mapMatrix[y + i][x] = 0;
+							}
+						}
 					}
-					if (mapMatrix[y][x + i] == 2 || (mapMatrix[y][x + i] > 3 && mapMatrix[y][x + i] < 11))
+					if (mapMatrix[y][x + i] == 2 || (mapMatrix[y][x + i] > 3 && mapMatrix[y][x + i] < 13))
 					{
-						score += 100;
-						enemy[mapMatrix[y][x + i]].setPosition(-60.f, -60.f);
-						enemiesDestroyed++;
-						mapMatrix[y][x + i] = 0;
+						if (mapMatrix[y][x + i - 1] == 3)
+							return;
+						else
+						{
+							score += 100;
+							enemy[mapMatrix[y][x + i]].setPosition(-60.f, -60.f);
+							if (mapMatrix[y][x + i] == 11)
+							{
+								isDoorRevealed = true;
+							}
+							else if (mapMatrix[y][x + i] == 12)
+							{
+								//isKeyRevealed = true;
+							}
+							else if (mapMatrix[y][x + i] == 1)
+							{
+								life--;
+							}
+							else
+							{
+								mapMatrix[y][x + i] = 0;
+							}
+						}
 					}
-					if (mapMatrix[y - i][x] == 2 || (mapMatrix[y - i][x] > 3 && mapMatrix[y - i][x] < 11))
+					if (mapMatrix[y - i][x] == 2 || (mapMatrix[y - i][x] > 3 && mapMatrix[y - i][x] < 13))
 					{
-						score += 100;
-						enemy[mapMatrix[y - i][x]].setPosition(-60.f, -60.f);
-						enemiesDestroyed++;
-						mapMatrix[y - i][x] = 0;
+						if (mapMatrix[y - i + 1][x] == 3)
+							return;
+						else
+						{
+							score += 100;
+							enemy[mapMatrix[y - i][x]].setPosition(-60.f, -60.f);
+							if (mapMatrix[y - i][x] == 11)
+							{
+								isDoorRevealed = true;
+							}
+							else if (mapMatrix[y - i][x] == 12)
+							{
+								//isKeyRevealed = true;
+							}
+							else if (mapMatrix[y - i][x] == 1)
+							{
+								life--;
+							}
+							else
+							{
+								mapMatrix[y - i][x] = 0;
+							}
+						}
 					}
-					if (mapMatrix[y][x - i] == 2 || (mapMatrix[y][x - i] > 3 && mapMatrix[y][x - i] < 11))
+					if (mapMatrix[y][x - i] == 2 || (mapMatrix[y][x - i] > 3 && mapMatrix[y][x - i] < 13))
 					{
-						score += 100;
-						enemy[mapMatrix[y][x - i]].setPosition(-60.f, -60.f);
-						enemiesDestroyed++;
-						mapMatrix[y][x - i] = 0;
-					}
+						if (mapMatrix[y][x - i + 1] == 3)
+							return;
+						else
+						{
 
-					if (mapMatrix[y + i][x] == 1)
-					{
-						life--;
+							score += 100;
+							enemy[mapMatrix[y][x - i]].setPosition(-60.f, -60.f);
+							if (mapMatrix[y][x - i] == 11)
+							{
+								isDoorRevealed = true;
+							}
+							else if (mapMatrix[y][x - i] == 12)
+							{
+								//isKeyRevealed = true;
+							}
+							else if (mapMatrix[y][x - i] == 1)
+							{
+								life--;
+							}
+							else
+							{
+								mapMatrix[y][x - i] = 0;
+							}
+						}
 					}
-					if (mapMatrix[y][x + i] == 1)
-					{
-						life--;
-					}
-					if (mapMatrix[y - i][x] == 1)
-					{
-						life--;
-					}
-					if (mapMatrix[y][x - i] == 1)
-					{
-						life--;
-					}
-					updateGrass();
+					updateObjects();
 				}
 				return;
 			}
@@ -557,7 +626,7 @@ bool Game::checkGridCollision(Sprite entity)
 			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
-				if (mapMatrix[y][x] == 3 || mapMatrix[y][x] == 2 || mapMatrix[y][x] == 11)
+				if (mapMatrix[y][x] == 3 || mapMatrix[y][x] == 2 || mapMatrix[y][x] == 11 || (isKeyRevealed == false && mapMatrix[y][x] == 12) || (isDoorRevealed == false && mapMatrix[y][x] == 11))
 				{
 					return true;
 				}
@@ -567,6 +636,42 @@ bool Game::checkGridCollision(Sprite entity)
 	return false;
 }
 
+void Game::updateObjects()
+{
+	for (int y = 0, counter = 0; y < 11; y++)
+	{
+		for (int x = 0; x < 17; x++, counter++)
+		{
+
+			// update grass
+			if (mapMatrix[y][x] == 0)
+			{
+				if (!floor.loadFromFile("./content/grass.png"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				grid[counter].setTexture(floor);
+			}
+			else if (mapMatrix[y][x] == 11 && isDoorRevealed == true)
+			{
+				if (!doorTexture.loadFromFile("./content/door.jpg"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				grid[counter].setTexture(doorTexture);
+			}
+
+			else if (mapMatrix[y][x] == 12 && isKeyRevealed == true)
+			{
+				/*if (!keyTexture.loadFromFile("./content/door.jpg"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				grid[counter].setTexture(keyTexture);*/
+			}
+		}
+	}
+}
 void Game::updateGrid(Sprite entity, int type)
 {
 
@@ -604,55 +709,11 @@ void Game::updateGrid(Sprite entity, int type)
 	}
 }
 
-void Game::updateGrass()
-{
-	for (int y = 0, counter = 0; y < 11; y++)
-	{
-		for (int x = 0; x < 17; x++, counter++)
-		{
-
-			// update grass
-			if (mapMatrix[y][x] == 0)
-			{
-				if (!floor.loadFromFile("./content/grass.png"))
-				{
-					cout << "Texture not loaded" << endl;
-				}
-				grid[counter].setTexture(floor);
-			}
-		}
-	}
-}
-
 bool Game::checkBombCollision(Sprite entity)
 {
 	if (entity.getGlobalBounds().intersects(bomb.getGlobalBounds()))
 	{
 		return true;
-	}
-	return false;
-}
-
-bool Game::checkPlayerBombCollision()
-{
-	for (int y = 0, counter = 0; y < 11; y++)
-	{
-		for (int x = 0; x < 17; x++, counter++)
-		{
-			//check if collides the entire area of the grid
-			if (bomb.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
-			{
-
-				if (mapMatrix[y][x] == 1)
-				{
-					return false;
-				}
-				else
-				{
-					return true;
-				}
-			}
-		}
 	}
 	return false;
 }
