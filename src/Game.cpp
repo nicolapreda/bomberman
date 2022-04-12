@@ -53,8 +53,6 @@ void Game::initWindow()
 {
 	videoMode.height = 730;
 	videoMode.width = 1020;
-	isKeyRevealed = false;
-	isDoorRevealed = false;
 	// init main variables
 	level = 1;
 	life = 3;
@@ -195,6 +193,25 @@ void Game::pollEvents()
 		lastKeyPressed = 3;
 		updateGrid(player, 1);
 	}
+	// unlock door
+	if (Keyboard::isKeyPressed(Keyboard::Key::Enter))
+	{
+		for (int y = 0, counter = 0; y < 11; y++)
+		{
+			for (int x = 0; x < 17; x++, counter++)
+			{
+				//check if collides the entire area of the grid
+				if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
+				{
+					isKeyUnlocked = true;
+					if (!floor.loadFromFile("./content/grass.png"))
+						cout << "Bomb texture not loaded!" << endl;
+					grid[counter].setTexture(floor);
+					mapMatrix[y][x] = 0;
+				}
+			}
+		}
+	}
 
 	// place bomb
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && bombCountDown == false)
@@ -309,6 +326,7 @@ void Game::render()
 	}
 
 	// check level win
+
 	for (int y = 0, counter = 0; y < 11; y++)
 	{
 		for (int x = 0; x < 17; x++, counter++)
@@ -316,10 +334,9 @@ void Game::render()
 			//check if collides the entire area of the grid
 			if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 
-				if (isKeyUnlocked == true && mapMatrix[y][x] == 12)
+				if (isKeyUnlocked == true && mapMatrix[y][x] == 11)
 				{
-					cout << "You win!! OwO" << endl;
-					window->close();
+					resultPage(0);
 				}
 		}
 	}
@@ -328,7 +345,7 @@ void Game::render()
 void Game::initGrid()
 {
 	srand(time(NULL));
-	int nWalls = 20, randPosX, randPosY, randPosDoorX, randPosDoorY, randPosKeyY, randPosKeyX;
+	int nWalls = 20, randPosX, randPosY, randPosDoorX, randPosDoorY, randPosKeyX, randPosKeyY;
 
 	int yPos = 84, xPos = 0;
 	for (int y = 0, counter = 0; y < 11; y++, yPos += 60, xPos = 0)
@@ -401,10 +418,11 @@ void Game::initGrid()
 			}
 			if (mapMatrix[randPosKeyY][randPosKeyX] == 2 && isKeyPlaced == false)
 			{
-				mapMatrix[randPosKeyY][randPosKeyX] = 12;
+				mapMatrix[randPosKeyY][randPosKeyX] = 13;
 				isKeyPlaced = true;
 			}
-			if (mapMatrix[y][x] == 2 || mapMatrix[y][x] == 11 || mapMatrix[y][x] == 12)
+
+			if (mapMatrix[y][x] == 2 || mapMatrix[y][x] == 11 || mapMatrix[y][x] == 13)
 			{
 				if (!wall.loadFromFile("./content/wall.png"))
 				{
@@ -514,14 +532,15 @@ void Game::checkDestroyedItems()
 							{
 								isDoorRevealed = true;
 							}
-							else if (mapMatrix[y + i][x] == 12)
-							{
-								//isKeyRevealed = true;
-							}
 							else if (mapMatrix[y + i][x] == 1)
 							{
 								life--;
 							}
+							else if (mapMatrix[y + i][x] == 13)
+							{
+								isKeyRevealed = true;
+							}
+
 							else
 							{
 								mapMatrix[y + i][x] = 0;
@@ -540,9 +559,9 @@ void Game::checkDestroyedItems()
 							{
 								isDoorRevealed = true;
 							}
-							else if (mapMatrix[y][x + i] == 12)
+							else if (mapMatrix[y][x + i] == 13)
 							{
-								//isKeyRevealed = true;
+								isKeyRevealed = true;
 							}
 							else if (mapMatrix[y][x + i] == 1)
 							{
@@ -554,7 +573,7 @@ void Game::checkDestroyedItems()
 							}
 						}
 					}
-					if (mapMatrix[y - i][x] == 2 || (mapMatrix[y - i][x] > 3 && mapMatrix[y - i][x] < 13))
+					if (mapMatrix[y - i][x] == 2 || (mapMatrix[y - i][x] > 3 && mapMatrix[y - i][x] < 14))
 					{
 						if (mapMatrix[y - i + 1][x] == 3)
 							return;
@@ -566,9 +585,9 @@ void Game::checkDestroyedItems()
 							{
 								isDoorRevealed = true;
 							}
-							else if (mapMatrix[y - i][x] == 12)
+							else if (mapMatrix[y - i][x] == 13)
 							{
-								//isKeyRevealed = true;
+								isKeyRevealed = true;
 							}
 							else if (mapMatrix[y - i][x] == 1)
 							{
@@ -580,7 +599,7 @@ void Game::checkDestroyedItems()
 							}
 						}
 					}
-					if (mapMatrix[y][x - i] == 2 || (mapMatrix[y][x - i] > 3 && mapMatrix[y][x - i] < 13))
+					if (mapMatrix[y][x - i] == 2 || (mapMatrix[y][x - i] > 3 && mapMatrix[y][x - i] < 14))
 					{
 						if (mapMatrix[y][x - i + 1] == 3)
 							return;
@@ -593,9 +612,9 @@ void Game::checkDestroyedItems()
 							{
 								isDoorRevealed = true;
 							}
-							else if (mapMatrix[y][x - i] == 12)
+							else if (mapMatrix[y][x - i] == 13)
 							{
-								//isKeyRevealed = true;
+								isKeyRevealed = true;
 							}
 							else if (mapMatrix[y][x - i] == 1)
 							{
@@ -626,7 +645,7 @@ bool Game::checkGridCollision(Sprite entity)
 			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
-				if (mapMatrix[y][x] == 3 || mapMatrix[y][x] == 2 || mapMatrix[y][x] == 11 || (isKeyRevealed == false && mapMatrix[y][x] == 12) || (isDoorRevealed == false && mapMatrix[y][x] == 11))
+				if (mapMatrix[y][x] == 3 || mapMatrix[y][x] == 2 || (isDoorRevealed == false && mapMatrix[y][x] == 11) || (isKeyRevealed == false && mapMatrix[y][x] == 13))
 				{
 					return true;
 				}
@@ -660,14 +679,13 @@ void Game::updateObjects()
 				}
 				grid[counter].setTexture(doorTexture);
 			}
-
-			else if (mapMatrix[y][x] == 12 && isKeyRevealed == true)
+			else if (mapMatrix[y][x] == 13 && isKeyRevealed == true)
 			{
-				/*if (!keyTexture.loadFromFile("./content/door.jpg"))
+				if (!keyTexture.loadFromFile("./content/key.jpg"))
 				{
 					cout << "Texture not loaded" << endl;
 				}
-				grid[counter].setTexture(keyTexture);*/
+				grid[counter].setTexture(keyTexture);
 			}
 		}
 	}
@@ -736,4 +754,49 @@ bool Game::checkBombPlaceCollision()
 		}
 	}
 	return false;
+}
+
+void Game::resultPage(int result)
+{
+	window->clear(Color::Black);
+	switch (result)
+	{
+		case 0:
+			// set result string
+			resultString.setFont(font);
+			resultString.setPosition(Vector2f(800.f, 50.f));
+			resultString.setFillColor(Color::White);
+			resultString.setCharacterSize(30);
+			scoreString.setString("You passed the level  " + to_string(level) + "!!");
+			window->draw(scoreString);
+
+			// set next level button
+			resultString.setFont(font);
+
+			nextLevelButton.setPosition(Vector2f(800.f, 200.f));
+			nextLevelButton.setFillColor(Color::White);
+			nextLevelButton.setString("Go to level" + to_string(level));
+			window->draw(nextLevelButton);
+
+			// set exit button
+			resultString.setFont(font);
+
+			nextLevelButton.setPosition(Vector2f(800.f, 200.f));
+			nextLevelButton.setFillColor(Color::White);
+			nextLevelButton.setString("Exit" + to_string(level));
+			window->draw(nextLevelButton);
+
+			break;
+		case 1:
+			// set result string
+			resultString.setFont(font);
+			resultString.setPosition(Vector2f(800.f, 50.f));
+			resultString.setFillColor(Color::White);
+			resultString.setCharacterSize(30);
+			scoreString.setString("You failed the level  " + to_string(level) + "!!");
+			window->draw(scoreString);
+			break;
+		default:
+			break;
+	}
 }
