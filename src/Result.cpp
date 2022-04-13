@@ -24,7 +24,65 @@ void Game::resultPage(int result, int level)
 				case Event::Closed:
 					resultView.close();
 					break;
+
 				case Event::KeyReleased:
+					if (event.key.code == Keyboard::Up)
+					{
+						if (mainMenuSelected > 0)
+						{
+							mainMenu[mainMenuSelected].setFillColor(Color::Blue);
+							MainMenu.clear();
+							mainMenuSelected--;
+							mainMenu[mainMenuSelected].setFillColor(Color::White);
+						}
+						break;
+					}
+					if (event.key.code == Keyboard::Down)
+					{
+						if (mainMenuSelected < 2)
+						{
+							mainMenu[mainMenuSelected].setFillColor(Color::Blue);
+							MainMenu.clear();
+							mainMenuSelected++;
+
+							mainMenu[mainMenuSelected].setFillColor(Color::White);
+						}
+						break;
+					}
+					if (event.key.code == Keyboard::Return)
+					{
+						int x = mainMenuSelected;
+						// init game engine
+						Game game;
+
+						switch (x)
+						{
+							case 0:
+								MainMenu.close();
+								while (game.running())
+								{
+									game.update();
+									game.render();
+								}
+
+								break;
+							case 1:
+								MainMenu.close();
+								while (game.running())
+								{
+									game.update();
+									game.render();
+								}
+
+								break;
+							case 2:
+								MainMenu.close();
+								break;
+							default:
+								break;
+						}
+					}
+
 					break;
 				default:
 					break;
