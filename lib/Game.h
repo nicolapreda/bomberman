@@ -19,7 +19,7 @@ private:
 	Clock bombClock;
 
 	//create enemy directions
-	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed;
+	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed, buttonResultSelected;
 
 	bool bombCountDown, isDoorPlaced, isKeyPlaced, isKeyRevealed, isDoorRevealed, isKeyUnlocked;
 	RectangleShape planeTable;
@@ -32,7 +32,7 @@ private:
 	Font font;
 	// textures
 	sf::Texture permWall, wall, playerTexture, grass, bombTexture, enemyTexture, floor, doorTexture, keyTexture;
-	sf::Text timerString, scoreString, levelString, lifeString;
+	sf::Text timerString, scoreString, levelString, lifeString, exitButton, nextLevelButton, resultString;
 
 	/*0 = terrain, 1 = player, 3 = perm walls, 2= walls, > 3 = enemies*/
 	int mapMatrix[11][17] = { 0 };

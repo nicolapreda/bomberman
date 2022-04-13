@@ -11,6 +11,8 @@ Game::~Game()
 
 Game::Game()
 {
+	resultPage(1, 1);
+	/*
 	initializeVariables();
 	initWindow();
 
@@ -31,6 +33,8 @@ Game::Game()
 
 	//init respawn clock
 	respawnClock.restart();
+
+	*/
 }
 
 bool Game::running()
