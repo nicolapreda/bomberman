@@ -336,7 +336,8 @@ void Game::render()
 
 				if (isKeyUnlocked == true && mapMatrix[y][x] == 11)
 				{
-					resultPage(0);
+					window->close();
+					resultPage(0, level);
 				}
 		}
 	}
@@ -754,49 +755,4 @@ bool Game::checkBombPlaceCollision()
 		}
 	}
 	return false;
-}
-
-void Game::resultPage(int result)
-{
-	window->clear(Color::Black);
-	switch (result)
-	{
-		case 0:
-			// set result string
-			resultString.setFont(font);
-			resultString.setPosition(Vector2f(800.f, 50.f));
-			resultString.setFillColor(Color::White);
-			resultString.setCharacterSize(30);
-			scoreString.setString("You passed the level  " + to_string(level) + "!!");
-			window->draw(scoreString);
-
-			// set next level button
-			resultString.setFont(font);
-
-			nextLevelButton.setPosition(Vector2f(800.f, 200.f));
-			nextLevelButton.setFillColor(Color::White);
-			nextLevelButton.setString("Go to level" + to_string(level));
-			window->draw(nextLevelButton);
-
-			// set exit button
-			resultString.setFont(font);
-
-			nextLevelButton.setPosition(Vector2f(800.f, 200.f));
-			nextLevelButton.setFillColor(Color::White);
-			nextLevelButton.setString("Exit" + to_string(level));
-			window->draw(nextLevelButton);
-
-			break;
-		case 1:
-			// set result string
-			resultString.setFont(font);
-			resultString.setPosition(Vector2f(800.f, 50.f));
-			resultString.setFillColor(Color::White);
-			resultString.setCharacterSize(30);
-			scoreString.setString("You failed the level  " + to_string(level) + "!!");
-			window->draw(scoreString);
-			break;
-		default:
-			break;
-	}
 }

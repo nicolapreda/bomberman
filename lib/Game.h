@@ -32,7 +32,7 @@ private:
 	Font font;
 	// textures
 	sf::Texture permWall, wall, playerTexture, grass, bombTexture, enemyTexture, floor, doorTexture, keyTexture;
-	sf::Text timerString, scoreString, levelString, lifeString, resultString, nextLevelButton, exitButton;
+	sf::Text timerString, scoreString, levelString, lifeString;
 
 	/*0 = terrain, 1 = player, 3 = perm walls, 2= walls, > 3 = enemies*/
 	int mapMatrix[11][17] = { 0 };
@@ -48,12 +48,12 @@ private:
 	void initEnemies();
 	void updateObjects();
 	bool checkBombPlaceCollision();
+	void resultPage(int result, int level);
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);
 	bool checkGridCollision(Sprite entity);
 	bool checkBombCollision(Sprite entity);
-	void resultPage(int result);
 
 public:
 	// constructors
