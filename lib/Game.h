@@ -32,7 +32,7 @@ private:
 	Font font;
 	// textures
 	sf::Texture permWall, wall, playerTexture, grass, bombTexture, enemyTexture, floor, doorTexture, keyTexture;
-	sf::Text timerString, scoreString, levelString, lifeString, exitButton, nextLevelButton, resultString;
+	sf::Text timerString, scoreString, levelString, lifeString;
 
 	/*0 = terrain, 1 = player, 3 = perm walls, 2= walls, > 3 = enemies*/
 	int mapMatrix[11][17] = { 0 };
@@ -47,7 +47,6 @@ private:
 	void initPlaneTable();
 	void initEnemies();
 	void updateObjects();
-	bool checkBombPlaceCollision();
 	void resultPage(int result, int level);
 
 	void checkDestroyedItems();
