@@ -21,12 +21,12 @@ private:
 	//create enemy directions
 	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed, buttonResultSelected;
 
-	bool bombCountDown, isDoorPlaced, isKeyPlaced, isKeyRevealed, isDoorRevealed, isKeyUnlocked;
+	bool bombCountDown, isDoorPlaced, isKeyPlaced, isKeyRevealed, isDoorRevealed, isKeyUnlocked, showDamagedZones;
 	RectangleShape planeTable;
 
 	Sprite grid[187], player, bomb, enemy[10], door, key;
 	//create a timer
-	Clock gameClock, respawnClock;
+	Clock gameClock, respawnClock, damageClock;
 
 	// main font
 	Font font;

@@ -213,7 +213,19 @@ void Game::pollEvents()
 	// place bomb
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && bombCountDown == false)
 	{
-		bomb.setPosition(player.getPosition().x, player.getPosition().y);
+		bool placed = false;
+		for (int y = 0, counter = 0; y < 11; y++)
+		{
+			for (int x = 0; x < 17; x++, counter++)
+			{
+				//check if collides the entire area of the grid
+				if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()) && placed == false)
+				{
+					bomb.setPosition(grid[counter].getPosition().x, grid[counter].getPosition().y);
+					placed = true;
+				}
+			}
+		}
 
 		if (!bombTexture.loadFromFile("./content/bomb.png"))
 			cout << "Bomb texture not loaded!" << endl;
@@ -289,19 +301,6 @@ void Game::render()
 	window->draw(bomb);
 
 	window->display();
-
-	//show mapmatrix
-	cout << endl;
-
-	for (int y = 0, counter = 0; y < 11; y++)
-	{
-
-		for (int x = 0; x < 17; x++, counter++)
-		{
-			cout << mapMatrix[y][x] << " ";
-		}
-		cout << endl;
-	}
 
 	// check level win
 

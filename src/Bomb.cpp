@@ -7,6 +7,9 @@
 
 void Game::checkDestroyedItems()
 {
+	showDamagedZones = true;
+	damageClock.restart();
+
 	for (int y = 0, counter = 0; y < 11; y++)
 	{
 		for (int x = 0; x < 17; x++, counter++)
