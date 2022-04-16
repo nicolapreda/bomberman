@@ -20,7 +20,7 @@ private:
 
 	//create enemy directions
 	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed, buttonResultSelected;
-
+	float enemySpeed;
 	bool bombCountDown, isDoorPlaced, isKeyPlaced, isKeyRevealed, isDoorRevealed, isKeyUnlocked, showDamagedZones;
 	RectangleShape planeTable;
 
@@ -47,7 +47,7 @@ private:
 	void initPlaneTable();
 	void initEnemies();
 	void updateObjects();
-	void resultPage(int result, int level);
+	void resultPage(int result);
 
 	void checkDestroyedItems();
 	void updateGrid(Sprite entity, int type);

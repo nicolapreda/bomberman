@@ -1,10 +1,6 @@
 #include <Game.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-void Game::resultPage(int result, int level)
+void Game::resultPage(int result)
 {
 	// initialize button result selected
 	buttonResultSelected = 1;
@@ -31,8 +27,9 @@ void Game::resultPage(int result, int level)
 		resultString.setString("You  failed  the  level  " + to_string(level) + " !!");
 		resultString.setFillColor(Color::Red);
 
-		level = 0;
+		level = 1;
 	}
+
 	sf::FloatRect textRect = resultString.getLocalBounds();
 	resultString.setOrigin(textRect.left + textRect.width / 2.0f,
 		textRect.top + textRect.height / 2.0f);
@@ -40,13 +37,13 @@ void Game::resultPage(int result, int level)
 
 	exitButton.setFont(font);
 	exitButton.setPosition(Vector2f(150.f, 500.f));
-	exitButton.setFillColor(Color::White);
+	exitButton.setFillColor(Color::Blue);
 	exitButton.setCharacterSize(30);
 	exitButton.setString("Exit");
 
 	nextLevelButton.setFont(font);
 	nextLevelButton.setPosition(Vector2f(650.f, 500.f));
-	nextLevelButton.setFillColor(Color::Blue);
+	nextLevelButton.setFillColor(Color::White);
 	nextLevelButton.setString("Go  to  level  " + to_string(level));
 	nextLevelButton.setCharacterSize(30);
 
@@ -67,10 +64,10 @@ void Game::resultPage(int result, int level)
 					{
 						if (buttonResultSelected == 1)
 						{
-							exitButton.setFillColor(Color::Blue);
+							exitButton.setFillColor(Color::White);
 							resultView.clear();
 							buttonResultSelected = 0;
-							nextLevelButton.setFillColor(Color::White);
+							nextLevelButton.setFillColor(Color::Blue);
 						}
 						break;
 					}
@@ -78,11 +75,11 @@ void Game::resultPage(int result, int level)
 					{
 						if (buttonResultSelected == 0)
 						{
-							nextLevelButton.setFillColor(Color::Blue);
+							nextLevelButton.setFillColor(Color::White);
 							resultView.clear();
 							buttonResultSelected = 1;
 
-							exitButton.setFillColor(Color::White);
+							exitButton.setFillColor(Color::Blue);
 						}
 						break;
 					}

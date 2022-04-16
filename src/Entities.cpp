@@ -27,9 +27,9 @@ void Game::initEnemies()
 
 		// set a random position
 		int randPosX = rand() % 17, randPosY = rand() % 11;
-		if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 2)
+		if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 1 && mapMatrix[randPosY][randPosX] != 2 && mapMatrix[randPosY][randPosX] != 11 && mapMatrix[randPosY][randPosX] != 13)
 		{
-			enemy[i + 4].setPosition(randPosX * 60, (randPosY * 60) + 84);
+			enemy[i + 4].setPosition(randPosX * 60 + 2, (randPosY * 60) + 86);
 		}
 		else
 		{

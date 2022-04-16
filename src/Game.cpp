@@ -20,12 +20,13 @@ Game::Game()
 	initPlaneTable();
 	initPlayer();
 	initEnemies();
+	srand(time(NULL));
 
 	// select enemies direction
 	for (int i = 4; i < 10; i++)
 	{
 		//select random directions
-		int randDirection = rand() % 4;
+		int randDirection = rand() % 3;
 		//insert into enemiesDirection
 		enemiesDirection[i] = randDirection;
 	}
@@ -55,7 +56,17 @@ void Game::initWindow()
 	videoMode.height = 730;
 	videoMode.width = 1020;
 	// init main variables
-	level = 1;
+	if (level == 1)
+	{
+		enemySpeed = 1;
+	}
+	else
+	{
+		enemySpeed += 0.4;
+	}
+
+	level++;
+
 	life = 3;
 	score = 0;
 	bombCountDown = false;
@@ -88,49 +99,123 @@ void Game::pollEvents()
 
 	for (int i = 4; i < 10; i++)
 	{
+		srand(time(0));
+
 		switch (enemiesDirection[i])
 		{
 			case 0:
-				enemy[i].move(0, -1.f);
+				enemy[i].move(0, -enemySpeed);
 				//check collisions
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(0, 1.f);
-					enemiesDirection[i] = rand() % 4;
-				}
+					srand(time(0));
 
+					enemy[i].move(0, enemySpeed);
+
+					enemiesDirection[i] = rand() % 500;
+					if (enemiesDirection[i] % 3 == 0)
+					{
+						enemiesDirection[i] = 3;
+					}
+					else if (enemiesDirection[i] % 2 == 0)
+					{
+						enemiesDirection[i] = 2;
+					}
+					else if (enemiesDirection[i] % 5 == 0)
+					{
+						enemiesDirection[i] = 1;
+					}
+					else
+					{
+						enemiesDirection[i] = 0;
+					}
+				}
 				// update grid
 				updateGrid(enemy[i], i);
 
 				break;
 			case 1:
-				enemy[i].move(0, 1.f);
+				srand(time(NULL));
+
+				enemy[i].move(0, enemySpeed);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(0, -1.f);
-					enemiesDirection[i] = rand() % 4;
+					enemy[i].move(0, -enemySpeed);
+					enemiesDirection[i] = rand() % 500;
+					if (enemiesDirection[i] % 3 == 0)
+					{
+						enemiesDirection[i] = 3;
+					}
+					else if (enemiesDirection[i] % 2 == 0)
+					{
+						enemiesDirection[i] = 2;
+					}
+					else if (enemiesDirection[i] % 5 == 0)
+					{
+						enemiesDirection[i] = 1;
+					}
+					else
+					{
+						enemiesDirection[i] = 0;
+					}
 				}
 
 				// update grid
 				updateGrid(enemy[i], i);
 				break;
 			case 2:
-				enemy[i].move(-1.f, 0);
+				srand(time(0));
+
+				enemy[i].move(-enemySpeed, 0);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(1.f, 0);
-					enemiesDirection[i] = rand() % 4;
+					enemy[i].move(enemySpeed, 0);
+					enemiesDirection[i] = rand() % 500;
+					if (enemiesDirection[i] % 3 == 0)
+					{
+						enemiesDirection[i] = 3;
+					}
+					else if (enemiesDirection[i] % 2 == 0)
+					{
+						enemiesDirection[i] = 2;
+					}
+					else if (enemiesDirection[i] % 5 == 0)
+					{
+						enemiesDirection[i] = 1;
+					}
+					else
+					{
+						enemiesDirection[i] = 0;
+					}
 				}
 
 				// update grid
 				updateGrid(enemy[i], i);
 				break;
 			case 3:
-				enemy[i].move(1.f, 0);
+				enemy[i].move(enemySpeed, 0);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(-1.f, 0);
-					enemiesDirection[i] = rand() % 4;
+					srand(time(NULL));
+
+					enemy[i].move(-enemySpeed, 0);
+					enemiesDirection[i] = rand() % 500;
+					if (enemiesDirection[i] % 3 == 0)
+					{
+						enemiesDirection[i] = 3;
+					}
+					else if (enemiesDirection[i] % 2 == 0)
+					{
+						enemiesDirection[i] = 2;
+					}
+					else if (enemiesDirection[i] % 5 == 0)
+					{
+						enemiesDirection[i] = 1;
+					}
+					else
+					{
+						enemiesDirection[i] = 0;
+					}
 				}
 				// update grid
 				updateGrid(enemy[i], i);
@@ -213,16 +298,14 @@ void Game::pollEvents()
 	// place bomb
 	if (Keyboard::isKeyPressed(Keyboard::Key::Space) && bombCountDown == false)
 	{
-		bool placed = false;
 		for (int y = 0, counter = 0; y < 11; y++)
 		{
 			for (int x = 0; x < 17; x++, counter++)
 			{
 				//check if collides the entire area of the grid
-				if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()) && placed == false)
+				if (player.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 				{
-					bomb.setPosition(grid[counter].getPosition().x, grid[counter].getPosition().y);
-					placed = true;
+					bomb.setPosition(grid[counter].getPosition().x + 2, grid[counter].getPosition().y + 2);
 				}
 			}
 		}
@@ -268,7 +351,7 @@ void Game::render()
 	{
 		window->close();
 
-		resultPage(1, level);
+		resultPage(1);
 	}
 
 	// draw objects
@@ -278,7 +361,7 @@ void Game::render()
 	{
 		window->close();
 
-		resultPage(1, level);
+		resultPage(1);
 	}
 	timer = 200;
 	//set timer string
@@ -314,7 +397,7 @@ void Game::render()
 				if (isKeyUnlocked == true && mapMatrix[y][x] == 11)
 				{
 					window->close();
-					resultPage(0, level);
+					resultPage(0);
 				}
 		}
 	}

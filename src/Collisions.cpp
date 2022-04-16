@@ -15,7 +15,7 @@ bool Game::checkGridCollision(Sprite entity)
 			if (entity.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
 
-				if (mapMatrix[y][x] == 3 || mapMatrix[y][x] == 2 || (isDoorRevealed == false && mapMatrix[y][x] == 11) || (isKeyRevealed == false && mapMatrix[y][x] == 13))
+				if (mapMatrix[y][x] == 2 || mapMatrix[y][x] == 3 || (isDoorRevealed == false && mapMatrix[y][x] == 11) || (isKeyRevealed == false && mapMatrix[y][x] == 13))
 				{
 					return true;
 				}
