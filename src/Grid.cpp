@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-void Game::initGrid()
+void MainGame::initGrid()
 {
 	srand(time(NULL));
 	int nWalls = 20, randPosX, randPosY, randPosDoorX, randPosDoorY, randPosKeyX, randPosKeyY;
@@ -97,7 +97,7 @@ void Game::initGrid()
 	}
 }
 
-void Game::initPlaneTable()
+void MainGame::initPlaneTable()
 {
 	// draw plane table
 	planeTable.setFillColor(Color(246, 129, 0));
@@ -107,7 +107,7 @@ void Game::initPlaneTable()
 	planeTable.setPosition(Vector2f(0, 0));
 
 	//load font
-	if (!font.loadFromFile("./content/ArcadeClassic.ttf"))
+	if (!font.loadFromFile("./content/fonts/ArcadeClassic.ttf"))
 	{
 		cout << "Font not loaded" << endl;
 	}
@@ -138,7 +138,7 @@ void Game::initPlaneTable()
 	levelString.setCharacterSize(30);
 }
 
-void Game::updateGrid(Sprite entity, int type)
+void MainGame::updateGrid(Sprite entity, int type)
 {
 
 	for (int y = 0, counter = 0; y < 11; y++)

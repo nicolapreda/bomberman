@@ -1,7 +1,7 @@
 
 #include <Game.h>
 
-void Game::checkDestroyedItems()
+void MainGame::checkDestroyedItems()
 {
 	showDamagedZones = true;
 	damageClock.restart();

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Platform/Platform.hpp"
 
 // libraries for "rand" function
@@ -8,7 +10,7 @@
 using namespace sf;
 using namespace std;
 
-class Game
+class MainGame
 {
 private:
 	// variables
@@ -19,8 +21,8 @@ private:
 	Clock bombClock;
 
 	//create enemy directions
-	int enemiesDirection[10], score, level, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed, buttonResultSelected;
-	float enemySpeed;
+	int enemiesDirection[10], score, lastGridEditedX = 1, lastGridEditedY = 1, life, clockInt, timer, enemiesDestroyed, lastKeyPressX, lastKeyPressed, buttonResultSelected;
+
 	bool bombCountDown, isDoorPlaced, isKeyPlaced, isKeyRevealed, isDoorRevealed, isKeyUnlocked, showDamagedZones;
 	RectangleShape planeTable;
 
@@ -55,9 +57,11 @@ private:
 	bool checkBombCollision(Sprite entity);
 
 public:
+	int level = 1;
+	float enemySpeed = 0.6;
 	// constructors
-	Game();
-	virtual ~Game();
+	MainGame();
+	virtual ~MainGame();
 	// accessors
 	bool running();
 

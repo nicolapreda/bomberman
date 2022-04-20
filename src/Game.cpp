@@ -1,15 +1,11 @@
 #include <Game.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-Game::~Game()
+MainGame::~MainGame()
 {
 	delete window;
 }
 
-Game::Game()
+MainGame::MainGame()
 {
 
 	initializeVariables();
@@ -20,12 +16,12 @@ Game::Game()
 	initPlaneTable();
 	initPlayer();
 	initEnemies();
-	srand(time(NULL));
 
 	// select enemies direction
 	for (int i = 4; i < 10; i++)
 	{
 		//select random directions
+		srand(time(NULL));
 		int randDirection = rand() % 3;
 		//insert into enemiesDirection
 		enemiesDirection[i] = randDirection;
@@ -35,56 +31,47 @@ Game::Game()
 	respawnClock.restart();
 }
 
-bool Game::running()
+bool MainGame::running()
 {
 	return window->isOpen();
 }
 
 // functions
-void Game::update()
+void MainGame::update()
 {
 	pollEvents();
 }
 
-void Game::initializeVariables()
+void MainGame::initializeVariables()
 {
 	window = nullptr;
 }
 
-void Game::initWindow()
+void MainGame::initWindow()
 {
+	// init height and width of the window
 	videoMode.height = 730;
 	videoMode.width = 1020;
-	// init main variables
-	if (level == 1)
-	{
-		enemySpeed = 1;
-	}
-	else
-	{
-		enemySpeed += 0.4;
-	}
 
-	level++;
+	// init main variables
 
 	life = 3;
 	score = 0;
 	bombCountDown = false;
+
+	// init window
 	window = new RenderWindow(videoMode, "Bomberman", Style::Close);
 
 	// set a framerate limit
 	window->setFramerateLimit(144);
 }
 
-void Game::pollEvents()
+void MainGame::pollEvents()
 {
 	while (window->pollEvent(event))
 	{
-		for (int i = 0; i < 180; i++)
-		{
-			window->draw(grid[i]);
-		}
 
+		// manage events
 		switch (event.type)
 		{
 			case Event::Closed:
@@ -96,10 +83,8 @@ void Game::pollEvents()
 	}
 
 	// move enemies
-
 	for (int i = 4; i < 10; i++)
 	{
-		srand(time(0));
 
 		switch (enemiesDirection[i])
 		{
@@ -110,7 +95,7 @@ void Game::pollEvents()
 				{
 					srand(time(0));
 
-					enemy[i].move(0, enemySpeed);
+					enemy[i].move(0, enemySpeed * 2);
 
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
@@ -140,7 +125,7 @@ void Game::pollEvents()
 				enemy[i].move(0, enemySpeed);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(0, -enemySpeed);
+					enemy[i].move(0, -enemySpeed * 2);
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
 					{
@@ -169,7 +154,7 @@ void Game::pollEvents()
 				enemy[i].move(-enemySpeed, 0);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(enemySpeed, 0);
+					enemy[i].move(enemySpeed * 2, 0);
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
 					{
@@ -198,7 +183,7 @@ void Game::pollEvents()
 				{
 					srand(time(NULL));
 
-					enemy[i].move(-enemySpeed, 0);
+					enemy[i].move(-enemySpeed * 2, 0);
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
 					{
@@ -234,7 +219,6 @@ void Game::pollEvents()
 	}
 
 	// check player movements
-
 	if (Keyboard::isKeyPressed(Keyboard::Key::A))
 	{
 
@@ -320,7 +304,7 @@ void Game::pollEvents()
 	}
 }
 
-void Game::render()
+void MainGame::render()
 {
 	// clear window
 	window->clear();
@@ -350,7 +334,7 @@ void Game::render()
 	if (life <= 0)
 	{
 		window->close();
-
+		level = 1;
 		resultPage(1);
 	}
 
@@ -360,7 +344,7 @@ void Game::render()
 	if (clockInt > timer)
 	{
 		window->close();
-
+		level = 1;
 		resultPage(1);
 	}
 	timer = 200;
@@ -397,6 +381,7 @@ void Game::render()
 				if (isKeyUnlocked == true && mapMatrix[y][x] == 11)
 				{
 					window->close();
+					level++;
 					resultPage(0);
 				}
 		}

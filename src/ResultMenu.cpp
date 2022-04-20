@@ -1,13 +1,13 @@
 #include <Game.h>
 
-void Game::resultPage(int result)
+void MainGame::resultPage(int result)
 {
 	// initialize button result selected
 	buttonResultSelected = 1;
 
 	sf::Text exitButton, nextLevelButton, resultString;
 	sf::Font font;
-	font.loadFromFile("./src/Assets/Fonts/ArcadeClassic.ttf");
+	font.loadFromFile("./content/fonts/ArcadeClassic.ttf");
 
 	// initialize window
 	RenderWindow resultView(VideoMode(1020, 730), "Bomberman", Style::Close);
@@ -20,14 +20,11 @@ void Game::resultPage(int result)
 	{
 		resultString.setString("You  passed  the  level  " + to_string(level) + " !!");
 		resultString.setFillColor(Color::Green);
-		level++;
 	}
 	else if (result == 1)
 	{
 		resultString.setString("You  failed  the  level  " + to_string(level) + " !!");
 		resultString.setFillColor(Color::Red);
-
-		level = 1;
 	}
 
 	sf::FloatRect textRect = resultString.getLocalBounds();
@@ -87,8 +84,9 @@ void Game::resultPage(int result)
 					{
 						if (buttonResultSelected == 1)
 						{
+							MainGame game;
+
 							// init game engine
-							Game game;
 							resultView.close();
 							while (game.running())
 							{

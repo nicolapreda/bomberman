@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-void Game::initPlayer()
+void MainGame::initPlayer()
 {
 	// load texture
 	if (!playerTexture.loadFromFile("./content/main-Sheet.png"))
@@ -15,7 +15,7 @@ void Game::initPlayer()
 	player.setPosition(61.f, 144.f);
 }
 
-void Game::initEnemies()
+void MainGame::initEnemies()
 {
 	for (int i = 0; i < 5; i++)
 	{
@@ -29,7 +29,7 @@ void Game::initEnemies()
 		int randPosX = rand() % 17, randPosY = rand() % 11;
 		if (mapMatrix[randPosY][randPosX] != 3 && mapMatrix[randPosY][randPosX] != 1 && mapMatrix[randPosY][randPosX] != 2 && mapMatrix[randPosY][randPosX] != 11 && mapMatrix[randPosY][randPosX] != 13)
 		{
-			enemy[i + 4].setPosition(randPosX * 60 + 2, (randPosY * 60) + 86);
+			enemy[i + 4].setPosition(randPosX * 60, (randPosY * 60) + 84);
 		}
 		else
 		{
@@ -38,7 +38,7 @@ void Game::initEnemies()
 	}
 }
 
-void Game::updateObjects()
+void MainGame::updateObjects()
 {
 	for (int y = 0, counter = 0; y < 11; y++)
 	{
@@ -56,7 +56,7 @@ void Game::updateObjects()
 			}
 			else if (mapMatrix[y][x] == 11 && isDoorRevealed == true)
 			{
-				if (!doorTexture.loadFromFile("./content/door.jpg"))
+				if (!doorTexture.loadFromFile("./content/door.png"))
 				{
 					cout << "Texture not loaded" << endl;
 				}
@@ -64,7 +64,7 @@ void Game::updateObjects()
 			}
 			else if (mapMatrix[y][x] == 13 && isKeyRevealed == true)
 			{
-				if (!keyTexture.loadFromFile("./content/key.jpg"))
+				if (!keyTexture.loadFromFile("./content/key.png"))
 				{
 					cout << "Texture not loaded" << endl;
 				}
