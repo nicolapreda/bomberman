@@ -89,13 +89,13 @@ void MainGame::pollEvents()
 		switch (enemiesDirection[i])
 		{
 			case 0:
-				enemy[i].move(0, -enemySpeed);
+				enemy[i].move(0, -updateEnemySpeed(0));
 				//check collisions
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
 					srand(time(0));
 
-					enemy[i].move(0, enemySpeed * 2);
+					enemy[i].move(0, updateEnemySpeed(0));
 
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
@@ -122,10 +122,11 @@ void MainGame::pollEvents()
 			case 1:
 				srand(time(NULL));
 
-				enemy[i].move(0, enemySpeed);
+				enemy[i].move(0, updateEnemySpeed(0));
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(0, -enemySpeed * 2);
+
+					enemy[i].move(0, -updateEnemySpeed(0));
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
 					{
@@ -151,10 +152,11 @@ void MainGame::pollEvents()
 			case 2:
 				srand(time(0));
 
-				enemy[i].move(-enemySpeed, 0);
+				enemy[i].move(-updateEnemySpeed(0), 0);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
-					enemy[i].move(enemySpeed * 2, 0);
+
+					enemy[i].move(updateEnemySpeed(0), 0);
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
 					{
@@ -178,12 +180,12 @@ void MainGame::pollEvents()
 				updateGrid(enemy[i], i);
 				break;
 			case 3:
-				enemy[i].move(enemySpeed, 0);
+				enemy[i].move(updateEnemySpeed(0), 0);
 				if (checkGridCollision(enemy[i]) || checkBombCollision(enemy[i]))
 				{
 					srand(time(NULL));
+					enemy[i].move(-updateEnemySpeed(0), 0);
 
-					enemy[i].move(-enemySpeed * 2, 0);
 					enemiesDirection[i] = rand() % 500;
 					if (enemiesDirection[i] % 3 == 0)
 					{
@@ -274,6 +276,7 @@ void MainGame::pollEvents()
 						cout << "Bomb texture not loaded!" << endl;
 					grid[counter].setTexture(floor);
 					mapMatrix[y][x] = 0;
+					updateObjects();
 				}
 			}
 		}
@@ -334,7 +337,6 @@ void MainGame::render()
 	if (life <= 0)
 	{
 		window->close();
-		level = 1;
 		resultPage(1);
 	}
 
@@ -344,7 +346,6 @@ void MainGame::render()
 	if (clockInt > timer)
 	{
 		window->close();
-		level = 1;
 		resultPage(1);
 	}
 	timer = 200;
@@ -361,7 +362,7 @@ void MainGame::render()
 	window->draw(lifeString);
 
 	//set level string
-	levelString.setString("Level  " + to_string(level));
+	levelString.setString("Level  " + to_string(updateLevel(0)));
 	window->draw(levelString);
 
 	window->draw(player);
@@ -381,9 +382,38 @@ void MainGame::render()
 				if (isKeyUnlocked == true && mapMatrix[y][x] == 11)
 				{
 					window->close();
-					level++;
 					resultPage(0);
 				}
 		}
 	}
+}
+
+int MainGame::updateLevel(int addLevel)
+{
+	static int level = 1;
+	if (addLevel == 1)
+	{
+		++level;
+	}
+	else if (addLevel == -1)
+	{
+		level = 1;
+	}
+
+	return level;
+}
+
+float MainGame::updateEnemySpeed(int addSpeed)
+{
+	static float enemySpeed = 0.6;
+	if (addSpeed == -1)
+	{
+		enemySpeed = 0.6;
+	}
+	else if (addSpeed == 1)
+	{
+		enemySpeed += 0.3;
+	}
+
+	return enemySpeed;
 }

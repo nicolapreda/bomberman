@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+// check grid collision with entities
 bool MainGame::checkGridCollision(Sprite entity)
 {
 
@@ -25,6 +26,7 @@ bool MainGame::checkGridCollision(Sprite entity)
 	return false;
 }
 
+// check bomb collision with entities
 bool MainGame::checkBombCollision(Sprite entity)
 {
 	if (entity.getGlobalBounds().intersects(bomb.getGlobalBounds()))

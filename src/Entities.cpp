@@ -7,7 +7,7 @@
 void MainGame::initPlayer()
 {
 	// load texture
-	if (!playerTexture.loadFromFile("./content/main-Sheet.png"))
+	if (!playerTexture.loadFromFile("./content/main.png"))
 	{
 		cout << "Texture player not loaded" << endl;
 	}
@@ -56,14 +56,37 @@ void MainGame::updateObjects()
 			}
 			else if (mapMatrix[y][x] == 11 && isDoorRevealed == true)
 			{
-				if (!doorTexture.loadFromFile("./content/door.png"))
+				if (!floor.loadFromFile("./content/grass.png"))
 				{
 					cout << "Texture not loaded" << endl;
 				}
-				grid[counter].setTexture(doorTexture);
+				grid[counter].setTexture(floor);
+
+				if (isKeyUnlocked == true)
+				{
+					if (!doorTexture.loadFromFile("./content/door_open.png"))
+					{
+						cout << "Texture not loaded" << endl;
+					}
+					grid[counter].setTexture(doorTexture);
+				}
+				else
+				{
+					if (!doorTexture.loadFromFile("./content/door_closed.png"))
+					{
+						cout << "Texture not loaded" << endl;
+					}
+					grid[counter].setTexture(doorTexture);
+				}
 			}
 			else if (mapMatrix[y][x] == 13 && isKeyRevealed == true)
 			{
+				if (!floor.loadFromFile("./content/grass.png"))
+				{
+					cout << "Texture not loaded" << endl;
+				}
+				grid[counter].setTexture(floor);
+
 				if (!keyTexture.loadFromFile("./content/key.png"))
 				{
 					cout << "Texture not loaded" << endl;

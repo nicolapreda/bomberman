@@ -12,7 +12,7 @@ void MainGame::checkDestroyedItems()
 			// check bomb explosion collision
 			if (bomb.getGlobalBounds().intersects(grid[counter].getGlobalBounds()))
 			{
-				for (int i = 1; i < 3; i++)
+				for (int i = 0; i < 3; i++)
 				{
 					if ((mapMatrix[y + i][x] == 2 || mapMatrix[y + i][x] == 1 || (mapMatrix[y + i][x] > 3 && mapMatrix[y + i][x] < 14)) && mapMatrix[y + 1][x] != 3)
 					{

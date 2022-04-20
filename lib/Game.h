@@ -56,9 +56,11 @@ private:
 	bool checkGridCollision(Sprite entity);
 	bool checkBombCollision(Sprite entity);
 
+	// updated levels and enemies speed
+	int updateLevel(int addLevel);
+	float updateEnemySpeed(int addSpeed);
+
 public:
-	int level = 1;
-	float enemySpeed = 0.6;
 	// constructors
 	MainGame();
 	virtual ~MainGame();

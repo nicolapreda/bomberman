@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+// initialize main grid
 void MainGame::initGrid()
 {
 	srand(time(NULL));
@@ -97,6 +98,7 @@ void MainGame::initGrid()
 	}
 }
 
+// initialize plane table
 void MainGame::initPlaneTable()
 {
 	// draw plane table

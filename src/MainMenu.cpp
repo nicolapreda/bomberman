@@ -144,6 +144,4 @@ int main()
 			MainMenu.display();
 		}
 	}
-
-	// call main functions when the game is running
 }

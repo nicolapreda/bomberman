@@ -18,13 +18,17 @@ void MainGame::resultPage(int result)
 
 	if (result == 0)
 	{
-		resultString.setString("You  passed  the  level  " + to_string(level) + " !!");
+		resultString.setString("You  passed  the  level  " + to_string(updateLevel(0)) + " !!");
+		updateLevel(1);
+		updateEnemySpeed(1);
 		resultString.setFillColor(Color::Green);
 	}
 	else if (result == 1)
 	{
-		resultString.setString("You  failed  the  level  " + to_string(level) + " !!");
+		resultString.setString("You  failed  the  level  " + to_string(updateLevel(0)) + " !!");
 		resultString.setFillColor(Color::Red);
+		updateEnemySpeed(-1);
+		updateLevel(-1);
 	}
 
 	sf::FloatRect textRect = resultString.getLocalBounds();
@@ -41,7 +45,7 @@ void MainGame::resultPage(int result)
 	nextLevelButton.setFont(font);
 	nextLevelButton.setPosition(Vector2f(650.f, 500.f));
 	nextLevelButton.setFillColor(Color::White);
-	nextLevelButton.setString("Go  to  level  " + to_string(level));
+	nextLevelButton.setString("Go  to  level  " + to_string(updateLevel(0)));
 	nextLevelButton.setCharacterSize(30);
 
 	while (resultView.isOpen())
